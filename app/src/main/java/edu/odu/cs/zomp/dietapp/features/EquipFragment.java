@@ -1,9 +1,11 @@
-package edu.odu.cs.zomp.dietapp;
+package edu.odu.cs.zomp.dietapp.features;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import edu.odu.cs.zomp.dietapp.R;
 
 public class EquipFragment extends BaseFragment {
 

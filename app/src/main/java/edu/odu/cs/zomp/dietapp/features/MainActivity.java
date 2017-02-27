@@ -1,10 +1,12 @@
-package edu.odu.cs.zomp.dietapp;
+package edu.odu.cs.zomp.dietapp.features;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
+
+import edu.odu.cs.zomp.dietapp.R;
 
 public class MainActivity extends AppCompatActivity {
 
