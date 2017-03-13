@@ -1,4 +1,4 @@
-package edu.odu.cs.zomp.dietapp.features;
+package edu.odu.cs.zomp.dietapp.shared;
 
 import android.support.v4.app.Fragment;
 

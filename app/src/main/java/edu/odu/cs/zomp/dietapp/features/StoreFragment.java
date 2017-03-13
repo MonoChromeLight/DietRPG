@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import edu.odu.cs.zomp.dietapp.R;
+import edu.odu.cs.zomp.dietapp.shared.BaseFragment;
 
 /**
  * Created by David on 2/8/17.

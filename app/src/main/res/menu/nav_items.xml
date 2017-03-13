@@ -4,22 +4,26 @@
 
     <item
         android:id="@+id/nav_home"
-        android:color="@color/googleBlue"
         android:icon="@drawable/ic_home"
         android:title="Home" />
+
     <item
         android:id="@+id/nav_profile"
-        android:color="@color/googleGreen"
         android:icon="@drawable/ic_avatar"
         android:title="Profile" />
+
+    <item
+        android:id="@+id/nav_quests"
+        android:icon="@drawable/ic_gamepad"
+        android:title="Quests" />
+
     <item
         android:id="@+id/nav_equip"
-        android:color="@color/googleYellow"
-        android:icon="@drawable/ic_gamepad"
+        android:icon="@drawable/ic_shield"
         android:title="Equip" />
+
     <item
         android:id="@+id/nav_store"
-        android:color="@color/googleRed"
         android:icon="@drawable/ic_shopping_cart"
         android:title="Store" />
 </menu>

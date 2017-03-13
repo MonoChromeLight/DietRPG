@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import edu.odu.cs.zomp.dietapp.R;
+import edu.odu.cs.zomp.dietapp.features.home.HomeFragment;
 import edu.odu.cs.zomp.dietapp.features.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,10 +38,14 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_profile:
                         pager.setCurrentItem(1);
                         return true;
-                    case R.id.nav_equip:
+                    case R.id.nav_quests:
                         pager.setCurrentItem(2);
                         return true;
+                    case R.id.nav_equip:
+                        pager.setCurrentItem(3);
+                        return true;
                     case R.id.nav_store:
+                        pager.setCurrentItem(4);
                         return true;
                     default:
                         return false;
@@ -60,8 +65,10 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     return ProfileFragment.newInstance();
                 case 2:
-                    return EquipFragment.newInstance();
+                    return QuestsFragment.newInstance();
                 case 3:
+                    return EquipFragment.newInstance();
+                case 4:
                     return StoreFragment.newInstance();
                 default:
                     return null;
@@ -69,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override public int getCount() {
-            return 4;
+            return 5;
         }
     }
 }
