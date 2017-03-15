@@ -47,7 +47,7 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.IHomeAdapt
     @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        username.setText("Krombopulos");
+        username.setText("David");
 
         try {
             InputStream imgStream = getContext().getAssets().open("char_sprite.png");
@@ -58,7 +58,7 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.IHomeAdapt
         }
 
         dailyProgressText.setText("0 / 5");
-        currentQuestText.setText("Battle for Lorim II");
+        currentQuestText.setText("Hello World");
 
         adapter = new HomeAdapter(getContext(), this);
         recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));

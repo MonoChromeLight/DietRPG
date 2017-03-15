@@ -21,6 +21,10 @@
             android:name=".features.profile.DietPickerActivity"
             android:parentActivityName=".features.MainActivity">
         </activity>
-    </application>
 
+        <activity
+            android:name=".features.battle.BattleActivity"
+            android:parentActivityName=".features.MainActivity"
+            android:screenOrientation="landscape"/>
+    </application>
 </manifest>
