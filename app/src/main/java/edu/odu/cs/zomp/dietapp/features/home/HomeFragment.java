@@ -50,7 +50,7 @@ public class HomeFragment extends BaseFragment implements HomeAdapter.IHomeAdapt
         username.setText("David");
 
         try {
-            InputStream imgStream = getContext().getAssets().open("char_sprite.png");
+            InputStream imgStream = getContext().getAssets().open("sprite_char.png");
             Drawable bgImg = Drawable.createFromStream(imgStream, null);
             avatar.setImageDrawable(bgImg);
         } catch (IOException e) {

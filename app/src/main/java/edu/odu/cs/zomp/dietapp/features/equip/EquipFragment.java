@@ -1,4 +1,4 @@
-package edu.odu.cs.zomp.dietapp.features;
+package edu.odu.cs.zomp.dietapp.features.equip;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
