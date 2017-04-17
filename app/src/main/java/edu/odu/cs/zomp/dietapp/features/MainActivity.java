@@ -17,6 +17,7 @@ import edu.odu.cs.zomp.dietapp.features.equip.EquipFragment;
 import edu.odu.cs.zomp.dietapp.features.home.HomeFragment;
 import edu.odu.cs.zomp.dietapp.features.profile.ProfileFragment;
 import edu.odu.cs.zomp.dietapp.features.quests.QuestsFragment;
+import edu.odu.cs.zomp.dietapp.features.store.StoreFragment;
 
 import static android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
 
