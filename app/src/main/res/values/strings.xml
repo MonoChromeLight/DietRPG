@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">DietRPG</string>
+
+    <!-- Shared preferences -->
+    <string name="sharedPref_dietId" translatable="false">diet_id</string>
+    <string name="sharedPref_dietTitle" translatable="false">diet_title</string>
 </resources>

@@ -5,10 +5,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".features.profile.DietPickerActivity">
+    tools:context=".ui.profile.DietPickerActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/view_dietpicker_recycler"
+        android:id="@+id/dietpicker_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>
