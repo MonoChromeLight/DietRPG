@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import edu.odu.cs.zomp.dietapp.R;
-import edu.odu.cs.zomp.dietapp.ui.equip.EquipFragment;
+import edu.odu.cs.zomp.dietapp.ui.character.CharacterFragment;
 import edu.odu.cs.zomp.dietapp.ui.home.HomeFragment;
 import edu.odu.cs.zomp.dietapp.ui.profile.ProfileFragment;
 import edu.odu.cs.zomp.dietapp.ui.quests.QuestsFragment;
@@ -86,7 +86,7 @@ public class MainActivity extends BaseActivity implements OnNavigationItemSelect
                 case 2:
                     return QuestsFragment.newInstance();
                 case 3:
-                    return EquipFragment.newInstance();
+                    return CharacterFragment.newInstance();
                 case 4:
                     return StoreFragment.newInstance();
                 default:

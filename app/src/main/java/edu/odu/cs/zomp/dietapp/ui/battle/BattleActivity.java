@@ -63,7 +63,7 @@ public class BattleActivity extends AppCompatActivity
             background.setImageDrawable(backgroundImgAsset);
 
             // Character sprite
-            imgStream = getAssets().open("sprite_char.png");
+            imgStream = getAssets().open("character_male.png");
             Drawable characterAsset = Drawable.createFromStream(imgStream, null);
             playerSprite.setImageDrawable(characterAsset);
 

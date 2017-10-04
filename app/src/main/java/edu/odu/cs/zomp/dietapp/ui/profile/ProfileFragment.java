@@ -1,7 +1,6 @@
 package edu.odu.cs.zomp.dietapp.ui.profile;
 
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -10,9 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -20,32 +20,29 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.io.IOException;
-import java.io.InputStream;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.data.models.Diet;
 import edu.odu.cs.zomp.dietapp.data.models.UserPrivate;
 import edu.odu.cs.zomp.dietapp.data.models.UserPublic;
 import edu.odu.cs.zomp.dietapp.ui.BaseFragment;
+import edu.odu.cs.zomp.dietapp.util.Constants;
 
 
 public class ProfileFragment extends BaseFragment {
 
     private static final String TAG = ProfileFragment.class.getSimpleName();
 
-    @BindView(R.id.view_profile_avatar) ImageView avatar;
-    @BindView(R.id.view_profile_username) TextView username;
-    @BindView(R.id.view_profile_dietCard) CardView dietCard;
-    @BindView(R.id.view_profile_dietCard_dietName) TextView activeDietBtn;
-//    @BindView(R.id.view_profile_strengthScore) TextView strengthScore;
-//    @BindView(R.id.view_profile_dexterityScore) TextView dexterityScore;
-//    @BindView(R.id.view_profile_willpowerScore) TextView willpowerScore;
-//    @BindView(R.id.view_profile_agilityScore) TextView agilityScore;
-//    @BindView(R.id.view_profile_luckScore) TextView luckScore;
+    @BindView(R.id.profile_avatar) CircleImageView avatar;
+    @BindView(R.id.profile_username) TextView username;
+    @BindView(R.id.profile_dietCard) CardView dietCard;
+    @BindView(R.id.profile_goldAmount) TextView goldIndicator;
+    @BindView(R.id.profile_dietCard_dietName) TextView activeDietBtn;
 
     private UserPublic publicUserData = null;
     private UserPrivate privateUserData = null;
@@ -71,9 +68,10 @@ public class ProfileFragment extends BaseFragment {
         if (authUser != null) {
             String uid = authUser.getUid();
 
+            // User public data
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference publicUserRef = database.getReference()
-                    .child("users-public")
+                    .child(Constants.DATABASE_PATH_USERS_PUBLIC)
                     .child(uid);
             publicUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override public void onDataChange(DataSnapshot dataSnapshot) {
@@ -86,9 +84,9 @@ public class ProfileFragment extends BaseFragment {
                 }
             });
 
-
+            // User private data
             DatabaseReference privateUserRef = database.getReference()
-                    .child("users-private")
+                    .child(Constants.DATABASE_PATH_USERS_PRIVATE)
                     .child(uid);
             privateUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override public void onDataChange(DataSnapshot dataSnapshot) {
@@ -100,27 +98,27 @@ public class ProfileFragment extends BaseFragment {
                     Log.e(TAG, databaseError.getMessage(), databaseError.toException().fillInStackTrace());
                 }
             });
+
+            // User Avatar
+            StorageReference avatarRef = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_USER_AVATARS)
+                    .child(uid + Constants.FILE_EXT_PNG);
+            Glide.with(getContext())
+                    .using(new FirebaseImageLoader())
+                    .load(avatarRef)
+                    .error(R.drawable.avatar)
+                    .into(avatar);
         }
 
-        username.setText("Krombopulos");
-
-        try {
-            InputStream imgStream = getContext().getAssets().open("sprite_char.png");
-            Drawable bgImg = Drawable.createFromStream(imgStream, null);
-            avatar.setImageDrawable(bgImg);
-        } catch (IOException e) {
-            Log.e("ProfileFragment", e.getMessage(), e.fillInStackTrace());
-        }
-
+        setUI();
         dietCard.setOnClickListener(view1 -> startActivity(DietPickerActivity.createIntent(getContext())));
     }
 
     private void setUIPublicData() {
-        username.setText(publicUserData.name);
+//        username.setText(publicUserData.name);
     }
 
     private void setUIPrivateData() {
-
+//        goldIndicator.setText(privateUserData.gold);
     }
 
     /**

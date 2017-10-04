@@ -85,11 +85,7 @@ public class DietPickerAdapter extends RecyclerView.Adapter<DietPickerAdapter.Di
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            root.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View view) {
-                    dietPickerInterface.dietClicked(availableDiets.get( getAdapterPosition() ));
-                }
-            });
+            root.setOnClickListener(view -> dietPickerInterface.dietClicked(availableDiets.get( getAdapterPosition() )));
         }
     }
 }

@@ -1,6 +1,7 @@
 package edu.odu.cs.zomp.dietapp.ui.auth;
 
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -17,19 +18,19 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 
 import edu.odu.cs.zomp.dietapp.R;
-import edu.odu.cs.zomp.dietapp.data.models.UserPrivate;
 import edu.odu.cs.zomp.dietapp.ui.BaseActivity;
 import edu.odu.cs.zomp.dietapp.ui.MainActivity;
 import edu.odu.cs.zomp.dietapp.ui.onboarding.OnboardingActivity;
+import edu.odu.cs.zomp.dietapp.util.Constants;
 
 
 public class LoginActivity extends BaseActivity {
 
+    private static final String TAG = LoginActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 123;
 
     @Override protected void onStart() {
         super.onStart();
-        updateDatabase();
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             startActivity(MainActivity.createIntent(this));
@@ -77,13 +78,12 @@ public class LoginActivity extends BaseActivity {
 
     private void checkUserProfile(FirebaseUser authUser) {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
-                .child("users-private")
+                .child(Constants.DATABASE_PATH_USERS_PRIVATE)
                 .child(authUser.getUid());
 
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                UserPrivate privateInfo = dataSnapshot.getValue(UserPrivate.class);
-                if (privateInfo == null) {
+                if (!dataSnapshot.exists()) {
                     startActivity(OnboardingActivity.createIntent(LoginActivity.this));
                 } else {
                     startActivity(MainActivity.createIntent(LoginActivity.this));
@@ -92,12 +92,8 @@ public class LoginActivity extends BaseActivity {
             }
 
             @Override public void onCancelled(DatabaseError databaseError) {
-
+                Log.e(TAG, databaseError.getMessage(), databaseError.toException().fillInStackTrace());
             }
         });
-    }
-
-    private void updateDatabase() {
-
     }
 }

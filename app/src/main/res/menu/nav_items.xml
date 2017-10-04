@@ -4,26 +4,26 @@
 
     <item
         android:id="@+id/nav_home"
-        android:icon="@drawable/ic_home"
+        android:icon="@drawable/home"
         android:title="Home" />
 
     <item
         android:id="@+id/nav_profile"
-        android:icon="@drawable/ic_avatar"
+        android:icon="@drawable/avatar"
         android:title="Profile" />
 
     <item
         android:id="@+id/nav_quests"
-        android:icon="@drawable/ic_gamepad"
+        android:icon="@drawable/gamepad"
         android:title="Quests" />
 
     <item
         android:id="@+id/nav_equip"
-        android:icon="@drawable/ic_shield"
+        android:icon="@drawable/shield"
         android:title="Equip" />
 
     <item
         android:id="@+id/nav_store"
-        android:icon="@drawable/ic_shopping_cart"
+        android:icon="@drawable/shopping_cart"
         android:title="Store" />
 </menu>

@@ -21,7 +21,7 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/spacing_normal"
-            android:src="@drawable/ic_shield"/>
+            android:src="@drawable/shield"/>
 
         <TextView
             android:id="@+id/view_battle_action_text"
