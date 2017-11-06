@@ -9,28 +9,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import edu.odu.cs.zomp.dietapp.GlideApp;
 import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.data.models.Diet;
 import edu.odu.cs.zomp.dietapp.data.models.UserPrivate;
 import edu.odu.cs.zomp.dietapp.data.models.UserPublic;
 import edu.odu.cs.zomp.dietapp.ui.BaseFragment;
+import edu.odu.cs.zomp.dietapp.ui.auth.LoginActivity;
 import edu.odu.cs.zomp.dietapp.util.Constants;
 
 
@@ -43,6 +42,7 @@ public class ProfileFragment extends BaseFragment {
     @BindView(R.id.profile_dietCard) CardView dietCard;
     @BindView(R.id.profile_goldAmount) TextView goldIndicator;
     @BindView(R.id.profile_dietCard_dietName) TextView activeDietBtn;
+    @BindView(R.id.profile_logout_btn) Button logoutBtn;
 
     private UserPublic publicUserData = null;
     private UserPrivate privateUserData = null;
@@ -69,56 +69,49 @@ public class ProfileFragment extends BaseFragment {
             String uid = authUser.getUid();
 
             // User public data
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference publicUserRef = database.getReference()
-                    .child(Constants.DATABASE_PATH_USERS_PUBLIC)
-                    .child(uid);
-            publicUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                    publicUserData = dataSnapshot.getValue(UserPublic.class);
-                    setUIPublicData();
-                }
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
-                @Override public void onCancelled(DatabaseError databaseError) {
-                    Log.e(TAG, databaseError.getMessage(), databaseError.toException().fillInStackTrace());
-                }
-            });
+            firestore
+                    .collection(Constants.DATABASE_PATH_USERS_PUBLIC)
+                    .document(uid)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        publicUserData = documentSnapshot.toObject(UserPublic.class);
+                        username.setText(publicUserData.name);
+                    });
 
-            // User private data
-            DatabaseReference privateUserRef = database.getReference()
-                    .child(Constants.DATABASE_PATH_USERS_PRIVATE)
-                    .child(uid);
-            privateUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                    privateUserData = dataSnapshot.getValue(UserPrivate.class);
-                    setUIPrivateData();
-                }
-
-                @Override public void onCancelled(DatabaseError databaseError) {
-                    Log.e(TAG, databaseError.getMessage(), databaseError.toException().fillInStackTrace());
-                }
-            });
+            firestore
+                    .collection(Constants.DATABASE_PATH_USERS_PRIVATE)
+                    .document(uid)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        privateUserData = documentSnapshot.toObject(UserPrivate.class);
+                        goldIndicator.setText(String.format(Locale.US, "%d", privateUserData.gold));
+                    });
 
             // User Avatar
-            StorageReference avatarRef = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_USER_AVATARS)
-                    .child(uid + Constants.FILE_EXT_PNG);
-            Glide.with(getContext())
-                    .using(new FirebaseImageLoader())
-                    .load(avatarRef)
-                    .error(R.drawable.avatar)
-                    .into(avatar);
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user.getPhotoUrl() != null) {
+                GlideApp.with(getContext())
+                        .load(user.getPhotoUrl())
+                        .into(avatar);
+            }
         }
 
-        setUI();
         dietCard.setOnClickListener(view1 -> startActivity(DietPickerActivity.createIntent(getContext())));
     }
 
+    @Override public void onStart() {
+        super.onStart();
+        setUI();
+    }
+
     private void setUIPublicData() {
-//        username.setText(publicUserData.name);
+        username.setText(publicUserData.name);
     }
 
     private void setUIPrivateData() {
-//        goldIndicator.setText(privateUserData.gold);
+
     }
 
     /**
@@ -135,5 +128,13 @@ public class ProfileFragment extends BaseFragment {
             activeDiet.title = "No Filter";
 
         activeDietBtn.setText(activeDiet.title);
+    }
+
+    @OnClick(R.id.profile_logout_btn)
+    void logout() {
+        AuthUI.getInstance()
+                .signOut(getActivity())
+                .addOnSuccessListener(aVoid -> startActivity(LoginActivity.createIntent(getContext())))
+                .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
     }
 }

@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -60,9 +58,7 @@ public class DietPickerAdapter extends RecyclerView.Adapter<DietPickerAdapter.Di
                 .child(diet.id + ".png");
 
         Glide.with(context)
-                .using(new FirebaseImageLoader())
                 .load(bgRef)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(holder.bg);
     }
 

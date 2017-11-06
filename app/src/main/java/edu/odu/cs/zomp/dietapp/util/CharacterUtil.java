@@ -55,9 +55,10 @@ public class CharacterUtil {
         return rogueStats;
     }
 
-    public static Character generateNewCharacter(String id, int gender, int playerClass) {
+    public static Character generateNewCharacter(String id, String name, int gender, int playerClass) {
         Character character = new Character();
         character.id = id;
+        character.name = name;
         character.gender = gender;
         character.playerClass = playerClass;
         character.inventory = new ArrayList<>();

@@ -14,6 +14,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -25,7 +28,6 @@ import edu.odu.cs.zomp.dietapp.data.models.Character;
 import edu.odu.cs.zomp.dietapp.ui.BaseFragment;
 import edu.odu.cs.zomp.dietapp.ui.character.adapters.AttributeAdapter;
 import edu.odu.cs.zomp.dietapp.ui.character.adapters.EquipmentAdapter;
-import edu.odu.cs.zomp.dietapp.util.CharacterUtil;
 
 public class CharacterFragment extends BaseFragment {
 
@@ -55,28 +57,17 @@ public class CharacterFragment extends BaseFragment {
     @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//        DatabaseReference characterRef = FirebaseDatabase.getInstance().getReference()
-//                .child(Constants.DATABASE_PATH_CHARACTERS)
-//                .child(uid);
-//        characterRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.exists()) {
-//                    character = dataSnapshot.getValue(Character.class);
-//                    initUI();
-//                } else {
-//                    Log.d(TAG, "No character data exists");
-//                }
-//            }
-//
-//            @Override public void onCancelled(DatabaseError databaseError) {
-//                Log.e(TAG, databaseError.getMessage(), databaseError.toException().fillInStackTrace());
-//            }
-//        });
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // DEBUG
-        character = CharacterUtil.generateNewCharacter("0", Character.GENDER_MALE, Character.CLASS_MAGE);
-        initUI();
+        FirebaseFirestore.getInstance()
+                .collection("characters")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    character = documentSnapshot.toObject(Character.class);
+                    initUI();
+                })
+                .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
     }
 
     private void initUI() {

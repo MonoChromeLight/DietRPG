@@ -8,14 +8,14 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 public class YummlyClient {
 
-    public final static String API_BASE_URL = "https://api.yummly.com/v1";
+    public final static String API_ENDPOINT = "https://api.yummly.com/v1";
 
 
     // Precursors
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
     private static Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
-            .baseUrl(API_BASE_URL)
+            .baseUrl(API_ENDPOINT)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(SimpleXmlConverterFactory.create());
 

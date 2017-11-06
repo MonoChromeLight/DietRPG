@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -82,7 +81,6 @@ public class EquipmentAdapter extends BaseAdapter {
                     .child(item.id + Constants.FILE_EXT_PNG);
 
             Glide.with(context)
-                    .using(new FirebaseImageLoader())
                     .load(iconRef)
                     .into(holder.spriteImg);
         }

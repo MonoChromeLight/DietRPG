@@ -8,13 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,7 +33,6 @@ public class DietPickerActivity extends AppCompatActivity implements DietPickerA
         ButterKnife.bind(this);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         initDietList();
     }
 
@@ -46,19 +41,16 @@ public class DietPickerActivity extends AppCompatActivity implements DietPickerA
         dietsRecycler.setLayoutManager(new LinearLayoutManager(this));
         dietsRecycler.setAdapter(adapter);
 
-        DatabaseReference dietsRef = FirebaseDatabase.getInstance().getReference().child("diets");
-        dietsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot dietSnapshot : dataSnapshot.getChildren()) {
-                    Diet d = dietSnapshot.getValue(Diet.class);
-                    adapter.add(d);
-                }
-            }
-
-            @Override public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, databaseError.getMessage(), databaseError.toException().fillInStackTrace());
-            }
-        });
+        FirebaseFirestore.getInstance()
+                .collection("diets")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            adapter.add(document.toObject(Diet.class));
+                        }
+                    }
+                });
     }
 
     public static Intent createIntent(Context context) {
@@ -71,6 +63,8 @@ public class DietPickerActivity extends AppCompatActivity implements DietPickerA
                 .putString(getString(R.string.sharedPref_dietId), diet.id)
                 .putString(getString(R.string.sharedPref_dietTitle), diet.title)
                 .apply();
+
+        // TODO: Handle update in Firestore
 
         finish();
     }

@@ -36,6 +36,7 @@ public class Character extends Actor {
             "Magic Def"
     };
 
+    public String name;
     public int gender;
     public int playerClass;
     public Map<String, Integer> stats;
@@ -46,6 +47,7 @@ public class Character extends Actor {
 
     public Character() {
         super();
+        this.name = null;
         this.gender = -1;
         this.stats = null;
         this.attributes = null;
@@ -54,10 +56,11 @@ public class Character extends Actor {
         this.questProgress = null;
     }
 
-    public Character(String id, int gender, int playerClass, Map<String, Integer> stats,
+    public Character(String id, String name, int gender, int playerClass, Map<String, Integer> stats,
                      Map<String, Integer> attributes, Map<String, ItemEquipment> equipment,
                      List<Item> inventory, Map<String, Integer> questProgress) {
         super(id);
+        this.name = name;
         this.gender = gender;
         this.playerClass = playerClass;
         this.stats = stats;
@@ -98,6 +101,7 @@ public class Character extends Actor {
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
+        map.put("name", name);
         map.put("gender", gender);
         map.put("playerClass", playerClass);
         map.put("stats", stats);

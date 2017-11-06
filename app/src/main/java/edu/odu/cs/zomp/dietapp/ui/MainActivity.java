@@ -27,7 +27,6 @@ public class MainActivity extends BaseActivity implements OnNavigationItemSelect
     @BindView(R.id.view_main_viewpager) ViewPager pager;
     @BindView(R.id.view_main_nav) BottomNavigationView nav;
 
-
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
