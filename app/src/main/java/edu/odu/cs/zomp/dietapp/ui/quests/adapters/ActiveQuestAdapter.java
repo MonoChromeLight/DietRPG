@@ -10,27 +10,28 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import edu.odu.cs.zomp.dietapp.R;
-import edu.odu.cs.zomp.dietapp.data.models.Quest;
+import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
 
 
-public class QuestsAdapter extends RecyclerView.Adapter<QuestsAdapter.ViewHolder> {
+public class ActiveQuestAdapter extends RecyclerView.Adapter<ActiveQuestAdapter.ViewHolder> {
 
     public interface IQuestsAdapter {
-        void questClicked(Quest quest);
+        void questClicked(QuestProgress questProgressItem);
     }
 
     private Context context = null;
     private IQuestsAdapter callbacks;
-    private List<Quest> quests = null;
+    private List<QuestProgress> activeQuests = null;
 
-    public QuestsAdapter(Context context, IQuestsAdapter callbacks) {
+    public ActiveQuestAdapter(Context context, IQuestsAdapter callbacks) {
         this.context = context;
         this.callbacks = callbacks;
-        this.quests = new ArrayList<>();
+        this.activeQuests = new ArrayList<>();
     }
 
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -39,24 +40,22 @@ public class QuestsAdapter extends RecyclerView.Adapter<QuestsAdapter.ViewHolder
     }
 
     @Override public void onBindViewHolder(ViewHolder holder, int position) {
-        Quest quest = quests.get(position);
-        holder.questTitle.setText(quest.title);
-
-        String progressString = quest.completedSegments + " / " + quest.totalSegments;
-        holder.questProgress.setText(progressString);
+        QuestProgress quest = activeQuests.get(position);
+        holder.questTitle.setText(quest.questName);
+        holder.questProgress.setText(String.format(Locale.US, "%d / %d", quest.currentSegment, quest.totalSegments));
     }
 
     @Override public int getItemCount() {
-        return quests.size();
+        return activeQuests.size();
     }
 
-    public void addQuest(Quest quest) {
-        this.quests.add(quest);
+    public void add(QuestProgress activeQuest) {
+        this.activeQuests.add(activeQuest);
         this.notifyDataSetChanged();
     }
 
-    public void addAllQuests(List<Quest> quests) {
-        this.quests = quests;
+    public void addAllQuests(List<QuestProgress> activeQuests) {
+        this.activeQuests = activeQuests;
         this.notifyDataSetChanged();
     }
 
@@ -71,11 +70,7 @@ public class QuestsAdapter extends RecyclerView.Adapter<QuestsAdapter.ViewHolder
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            viewRoot.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    callbacks.questClicked( quests.get(getAdapterPosition()) );
-                }
-            });
+            viewRoot.setOnClickListener(v -> callbacks.questClicked( activeQuests.get(getAdapterPosition()) ));
         }
     }
 }

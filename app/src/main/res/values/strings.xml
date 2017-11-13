@@ -8,13 +8,6 @@
     <!-- File extensions -->
     <string name="fileExt_png" translatable="false">.png</string>
 
-
-    <string name="dietVegetarian">388^Lacto vegetarian</string>
-    <string name="dietPescetarian">390^Pescetarian</string>
-    <string name="dietVegan">386^Vegan</string>
-    <string name="dietPaleo">403^Paleo</string>
-
-
     <string name="courseBreakfast">course^course-Breakfast and Brunch</string>
     <string name="courseLunch">course^course-Lunch</string>
     <string name="courseDinner">course^course-Main Dishes</string>

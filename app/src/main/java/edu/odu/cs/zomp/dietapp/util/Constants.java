@@ -12,6 +12,7 @@ public final class Constants {
     public static final String DATABASE_PATH_CHARACTERS = "characters";
     public static final String DATABASE_PATH_QUESTS = "quests";
     public static final String DATABASE_PATH_ITEMS = "items";
+    public static final String DATABASE_PATH_DIETS = "diets";
 
     public static final String STORAGE_PATH_USER_AVATARS = "user-avatars";
     public static final String STORAGE_PATH_DIET_BACKGROUNDS = "diet-backgrounds";

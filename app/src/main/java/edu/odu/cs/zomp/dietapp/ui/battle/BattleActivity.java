@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.data.models.Quest;
+import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
 import edu.odu.cs.zomp.dietapp.ui.battle.adapters.ActionAdapter;
 
 
@@ -27,6 +28,8 @@ public class BattleActivity extends AppCompatActivity
         implements ActionAdapter.IActionAdapter {
 
     private static final String TAG = BattleActivity.class.getSimpleName();
+    private static final String ARG_QUEST = "quest";
+    private static final String ARG_PROGRESS = "user_progress";
 
     @BindView(R.id.view_battle_root) LinearLayout viewRoot;
     @BindView(R.id.view_battle_bg) ImageView background;
@@ -34,13 +37,19 @@ public class BattleActivity extends AppCompatActivity
     @BindView(R.id.view_battle_playerSprite) ImageView playerSprite;
     @BindView(R.id.view_battle_enemySprite) ImageView enemySprite;
 
-    Quest quest = null;
-    RecyclerView.Adapter adapter = null;
+    private QuestProgress userProgress;
+    private Quest quest;
+    private RecyclerView.Adapter adapter;
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getIntent() != null)
-            quest = getIntent().getParcelableExtra("quest");
+        if (getIntent() != null) {
+            quest = getIntent().getParcelableExtra(ARG_QUEST);
+            userProgress = getIntent().getParcelableExtra(ARG_PROGRESS);
+        } else if (savedInstanceState != null) {
+            quest = savedInstanceState.getParcelable(ARG_QUEST);
+            userProgress = savedInstanceState.getParcelable(ARG_PROGRESS);
+        }
 
         setContentView(R.layout.activity_battle);
         ButterKnife.bind(this);
@@ -63,6 +72,7 @@ public class BattleActivity extends AppCompatActivity
             background.setImageDrawable(backgroundImgAsset);
 
             // Character sprite
+
             imgStream = getAssets().open("character_male.png");
             Drawable characterAsset = Drawable.createFromStream(imgStream, null);
             playerSprite.setImageDrawable(characterAsset);
@@ -72,13 +82,29 @@ public class BattleActivity extends AppCompatActivity
             Drawable enemyAsset = Drawable.createFromStream(imgStream, null);
             enemySprite.setImageDrawable(enemyAsset);
         } catch (IOException e) {
-            Log.e("BattleActivity", e.getMessage(), e.fillInStackTrace());
+            Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }
     }
 
-    public static Intent createIntent(Context context, Quest quest) {
+    @Override protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ARG_QUEST, quest);
+        outState.putParcelable(ARG_PROGRESS, userProgress);
+    }
+
+    @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState == null)
+            return;
+
+        quest = savedInstanceState.getParcelable(ARG_QUEST);
+        userProgress = savedInstanceState.getParcelable(ARG_PROGRESS);
+    }
+
+    public static Intent createIntent(Context context, Quest quest, QuestProgress userProgress) {
         Intent intent = new Intent(context, BattleActivity.class);
-        intent.putExtra("quest", quest);
+        intent.putExtra(ARG_QUEST, quest);
+        intent.putExtra(ARG_PROGRESS, userProgress);
         return intent;
     }
 

@@ -15,59 +15,31 @@ public class Character extends Actor {
     public static final int CLASS_MAGE = 1;
     public static final int CLASS_ROGUE = 2;
 
-    public static final String[] statNames = {
-            "Health",
-            "Max Health",
-            "Mana",
-            "Max Mana",
-            "Level",
-            "Experience",
-            "ExpToLevel"
-    };
-
-    public static final String[] attributeNames = {
-            "Constitution",
-            "Strength",
-            "Intelligence",
-            "Wisdom",
-            "Agility",
-            "Dexterity",
-            "Phys. Def",
-            "Magic Def"
-    };
-
-    public String name;
     public int gender;
     public int playerClass;
-    public Map<String, Integer> stats;
-    public Map<String, Integer> attributes;
     public Map<String, ItemEquipment> equipment;
     public List<Item> inventory;
-    public Map<String, Integer> questProgress;
+    public List<QuestProgress> questJournal;
 
     public Character() {
         super();
-        this.name = null;
         this.gender = -1;
         this.stats = null;
         this.attributes = null;
         this.equipment = null;
         this.inventory = null;
-        this.questProgress = null;
+        this.questJournal = null;
     }
 
     public Character(String id, String name, int gender, int playerClass, Map<String, Integer> stats,
                      Map<String, Integer> attributes, Map<String, ItemEquipment> equipment,
-                     List<Item> inventory, Map<String, Integer> questProgress) {
-        super(id);
-        this.name = name;
+                     List<Item> inventory, List<QuestProgress> questJournal) {
+        super(id, name, stats, attributes);
         this.gender = gender;
         this.playerClass = playerClass;
-        this.stats = stats;
-        this.attributes = attributes;
         this.equipment = equipment;
         this.inventory = inventory;
-        this.questProgress = questProgress;
+        this.questJournal = questJournal;
     }
 
     public Map<String, Integer> getAugmentedAttributes() {
@@ -108,7 +80,7 @@ public class Character extends Actor {
         map.put("attributes", attributes);
         map.put("equipment", equipment);
         map.put("inventory", inventory);
-        map.put("questProgress", questProgress);
+        map.put("questJournal", questJournal);
         return map;
     }
 }

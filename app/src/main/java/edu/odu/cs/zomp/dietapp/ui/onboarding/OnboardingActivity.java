@@ -27,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.data.models.Character;
+import edu.odu.cs.zomp.dietapp.data.models.Diet;
 import edu.odu.cs.zomp.dietapp.data.models.UserPrivate;
 import edu.odu.cs.zomp.dietapp.data.models.UserPublic;
 import edu.odu.cs.zomp.dietapp.ui.BaseActivity;
@@ -37,6 +38,7 @@ import edu.odu.cs.zomp.dietapp.util.Constants;
 
 public class OnboardingActivity extends BaseActivity implements OnboardingDataManager, StepperLayout.StepperListener {
 
+    private static final String TAG = OnboardingActivity.class.getSimpleName();
     private static final String KEY_POSITION = "position";
     private static final String KEY_DATA = "data";
 
@@ -83,10 +85,10 @@ public class OnboardingActivity extends BaseActivity implements OnboardingDataMa
 
         if (TextUtils.equals(key, "gender") || TextUtils.equals(key, "class")) {
             userData.putInt(key, value);
-            Log.d("Onboarding", "Set user " + key + " info to " + value);
+            Log.d(TAG, "Set user " + key + " info to " + value);
         } else {
             userData.putString("name", key);
-            Log.d("Onboarding", "Set user name info to " + key);
+            Log.d(TAG, "Set user name info to " + key);
         }
     }
 
@@ -96,19 +98,21 @@ public class OnboardingActivity extends BaseActivity implements OnboardingDataMa
     }
 
     @Override public void onCompleted(View completeButton) {
-        Log.d("Onboarding", "Review complete, uploading user data");
+        Log.d(TAG, "Review complete, uploading user data");
         FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
 
         String name = userData.getString("name");
         int gender = userData.getInt("gender");
         int classType = userData.getInt("class");
         String uid = authUser.getUid();
-        Log.d("Onboarding", "Retrieved uid: " + uid);
+        Log.d(TAG, "Retrieved uid: " + uid);
 
         Character character = CharacterUtil.generateNewCharacter(uid, name, gender, classType);
 
         // Create userData
-        UserPrivate privateData = new UserPrivate(uid, "-KvVBIHEIbRB2hCpQ47n", 0);
+
+        Diet noFilterDiet = new Diet("-KvVBIHEIbRB2hCpQ47n", "No Filter", null);
+        UserPrivate privateData = new UserPrivate(uid, noFilterDiet, 0);
         UserPublic publicData = new UserPublic(uid, authUser.getDisplayName());
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
@@ -129,11 +133,11 @@ public class OnboardingActivity extends BaseActivity implements OnboardingDataMa
         batch.commit()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("Onboarding", "Successfully written user character and profile data");
+                        Log.d(TAG, "Successfully written user character and profile data");
                         startActivity(MainActivity.createIntent(OnboardingActivity.this));
                         finish();
                     } else {
-                        Log.e("Onboarding", task.getException().getMessage(), task.getException().fillInStackTrace());
+                        Log.e(TAG, task.getException().getMessage(), task.getException().fillInStackTrace());
                     }
                 });
     }

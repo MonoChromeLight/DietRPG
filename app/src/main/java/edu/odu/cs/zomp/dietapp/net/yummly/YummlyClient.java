@@ -4,11 +4,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class YummlyClient {
 
-    public final static String API_ENDPOINT = "https://api.yummly.com/v1";
+    public final static String API_ENDPOINT = "http://api.yummly.com/v1/api/";
 
 
     // Precursors
@@ -17,7 +17,7 @@ public class YummlyClient {
     private static Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
             .baseUrl(API_ENDPOINT)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(SimpleXmlConverterFactory.create());
+            .addConverterFactory(GsonConverterFactory.create());
 
     public static <S> S createService(Class<S> serviceClass) {
         // Inject HTTP Log interceptor

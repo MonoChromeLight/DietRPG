@@ -14,68 +14,65 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import edu.odu.cs.zomp.dietapp.R;
+import edu.odu.cs.zomp.dietapp.net.yummly.models.Match;
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 
-public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
+public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
 
     // Adapter interface
     public interface IHomeAdapter {
-        void itemClicked(String text);
+        void itemClicked(Match match);
     }
 
-    // ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.view_list_item_home_root) LinearLayout rootView;
-        @BindView(R.id.view_list_item_home_text) TextView itemText;
+        @BindView(R.id.list_item_home_root) LinearLayout rootView;
+        @BindView(R.id.list_item_recipe_name) TextView itemText;
+        @BindView(R.id.list_item_recipe_ratingBar) MaterialRatingBar ratingBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            rootView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    adapterInterface.itemClicked(data.get( getAdapterPosition() ));
-                }
-            });
+            rootView.setOnClickListener(v -> adapterInterface.itemClicked(data.get( getAdapterPosition() )));
         }
     }
 
-    // Member variables
     private Context context = null;
     private IHomeAdapter adapterInterface = null;
-    private List<String> data = new ArrayList<>();
+    private List<Match> data = new ArrayList<>();
 
-    //Constructor
-    public HomeAdapter(Context context, IHomeAdapter adapterInterface) {
+    public RecipeAdapter(Context context, IHomeAdapter adapterInterface) {
         this.context = context;
         this.adapterInterface = adapterInterface;
     }
 
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_item_home, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.list_item_recipe, parent, false);
         return new ViewHolder(view);
     }
 
     @Override public void onBindViewHolder(ViewHolder holder, int position) {
-        String dataItem = data.get(position);
-        holder.itemText.setText(dataItem);
+        Match recipe = data.get(position);
+        holder.itemText.setText(recipe.recipeName);
+        holder.ratingBar.setRating(recipe.rating);
     }
 
     @Override public int getItemCount() {
         return (data != null) ? data.size() : 0;
     }
 
-    public void add(String item) {
+    public void add(Match recipe) {
         if (data == null)
             data = new ArrayList<>();
 
-        data.add(item);
+        data.add(recipe);
         this.notifyDataSetChanged();
     }
 
-    public void add(List<String> items) {
-        data = items;
+    public void add(List<Match> recipes) {
+        data = recipes;
         this.notifyDataSetChanged();
     }
 

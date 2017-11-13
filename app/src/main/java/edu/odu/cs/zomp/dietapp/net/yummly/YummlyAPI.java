@@ -7,6 +7,14 @@ import retrofit2.http.Query;
 
 public interface YummlyAPI {
 
-    @GET("/recipes")
-    Observable<RecipeResult> getRecipes(@Query("allowedDiet[]") String diet);
+    @GET("recipes")
+    Observable<RecipeResult> getRecipes(
+            @Query("maxResult") int maxResults,
+            @Query("requirePictures") boolean requirePictures);
+
+    @GET("recipes")
+    Observable<RecipeResult> getRecipes(
+            @Query("allowedDiet[]") String diet,
+            @Query("maxResult") int maxResults,
+            @Query("requirePictures") boolean requirePictures);
 }

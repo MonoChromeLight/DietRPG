@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.odu.cs.zomp.dietapp.data.models.Character;
+import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
 
 
 /**
@@ -21,7 +22,7 @@ public class CharacterUtil {
         warriorStats.put("Wisdom", 3);
         warriorStats.put("Agility", 5);
         warriorStats.put("Dexterity", 5);
-        warriorStats.put("Phys. Def", 8);
+        warriorStats.put("Physical Def", 8);
         warriorStats.put("Magic Def", 3);
 
         return warriorStats;
@@ -35,7 +36,7 @@ public class CharacterUtil {
         mageStats.put("Wisdom", 8);
         mageStats.put("Agility", 4);
         mageStats.put("Dexterity", 5);
-        mageStats.put("Phys. Def", 3);
+        mageStats.put("Physical Def", 3);
         mageStats.put("Magic Def", 8);
 
         return mageStats;
@@ -49,7 +50,7 @@ public class CharacterUtil {
         rogueStats.put("Wisdom", 5);
         rogueStats.put("Agility", 10);
         rogueStats.put("Dexterity", 8);
-        rogueStats.put("Phys. Def", 5);
+        rogueStats.put("Physical Def", 5);
         rogueStats.put("Magic Def", 5);
 
         return rogueStats;
@@ -62,6 +63,10 @@ public class CharacterUtil {
         character.gender = gender;
         character.playerClass = playerClass;
         character.inventory = new ArrayList<>();
+        character.questJournal = new ArrayList<>();
+
+        QuestProgress starterQuestProgess = new QuestProgress("HuKmh5qCjqFT7n2rXMWZ", "Adventure Awaits!", 0, 2);
+        character.questJournal.add(starterQuestProgess);
 
         switch (playerClass) {
             case Character.CLASS_WARRIOR:

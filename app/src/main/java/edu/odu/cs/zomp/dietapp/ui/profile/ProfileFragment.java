@@ -1,8 +1,6 @@
 package edu.odu.cs.zomp.dietapp.ui.profile;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -25,7 +23,6 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import edu.odu.cs.zomp.dietapp.GlideApp;
 import edu.odu.cs.zomp.dietapp.R;
-import edu.odu.cs.zomp.dietapp.data.models.Diet;
 import edu.odu.cs.zomp.dietapp.data.models.UserPrivate;
 import edu.odu.cs.zomp.dietapp.data.models.UserPublic;
 import edu.odu.cs.zomp.dietapp.ui.BaseFragment;
@@ -46,7 +43,6 @@ public class ProfileFragment extends BaseFragment {
 
     private UserPublic publicUserData = null;
     private UserPrivate privateUserData = null;
-    private Diet activeDiet = null;
 
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
@@ -62,7 +58,11 @@ public class ProfileFragment extends BaseFragment {
 
     @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        dietCard.setOnClickListener(view1 -> startActivity(DietPickerActivity.createIntent(getContext())));
+    }
 
+    @Override public void onResume() {
+        super.onResume();
         // Load user data
         FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
         if (authUser != null) {
@@ -86,6 +86,7 @@ public class ProfileFragment extends BaseFragment {
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         privateUserData = documentSnapshot.toObject(UserPrivate.class);
+                        activeDietBtn.setText(privateUserData.activeDiet.title);
                         goldIndicator.setText(String.format(Locale.US, "%d", privateUserData.gold));
                     });
 
@@ -97,37 +98,10 @@ public class ProfileFragment extends BaseFragment {
                         .into(avatar);
             }
         }
-
-        dietCard.setOnClickListener(view1 -> startActivity(DietPickerActivity.createIntent(getContext())));
     }
 
     @Override public void onStart() {
         super.onStart();
-        setUI();
-    }
-
-    private void setUIPublicData() {
-        username.setText(publicUserData.name);
-    }
-
-    private void setUIPrivateData() {
-
-    }
-
-    /**
-     * Set profile details that are not saved in Firebase
-     */
-    void setUI() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        activeDiet = new Diet(
-                prefs.getString(getString(R.string.sharedPref_dietId), null),
-                prefs.getString(getString(R.string.sharedPref_dietTitle), null));
-        // Admittedly a lazy hack but if shared preference is null initially, display "No Filter"
-        // This should be fixed to line up with the actual no filter diet object
-        if (activeDiet.title == null)
-            activeDiet.title = "No Filter";
-
-        activeDietBtn.setText(activeDiet.title);
     }
 
     @OnClick(R.id.profile_logout_btn)
