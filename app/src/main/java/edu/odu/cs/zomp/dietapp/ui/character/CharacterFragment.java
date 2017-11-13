@@ -28,6 +28,7 @@ import edu.odu.cs.zomp.dietapp.data.models.Character;
 import edu.odu.cs.zomp.dietapp.ui.BaseFragment;
 import edu.odu.cs.zomp.dietapp.ui.character.adapters.AttributeAdapter;
 import edu.odu.cs.zomp.dietapp.ui.character.adapters.EquipmentAdapter;
+import edu.odu.cs.zomp.dietapp.util.Constants;
 
 public class CharacterFragment extends BaseFragment {
 
@@ -60,7 +61,7 @@ public class CharacterFragment extends BaseFragment {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         FirebaseFirestore.getInstance()
-                .collection("characters")
+                .collection(Constants.DATABASE_PATH_CHARACTERS)
                 .document(uid)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {

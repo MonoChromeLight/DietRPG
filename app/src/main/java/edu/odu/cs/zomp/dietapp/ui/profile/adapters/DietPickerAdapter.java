@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -18,8 +17,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import edu.odu.cs.zomp.dietapp.GlideApp;
 import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.data.models.Diet;
+import edu.odu.cs.zomp.dietapp.util.Constants;
 
 
 public class DietPickerAdapter extends RecyclerView.Adapter<DietPickerAdapter.DietHolder> {
@@ -54,10 +55,10 @@ public class DietPickerAdapter extends RecyclerView.Adapter<DietPickerAdapter.Di
 
         // Retrieve image from firebase
         StorageReference bgRef = FirebaseStorage.getInstance().getReference()
-                .child("diet-backgrounds")
-                .child(diet.id + ".png");
+                .child(Constants.STORAGE_PATH_DIET_BACKGROUNDS)
+                .child(diet.id + Constants.FILE_EXT_PNG);
 
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(bgRef)
                 .into(holder.bg);
     }
