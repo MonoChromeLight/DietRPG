@@ -1,5 +1,6 @@
 package edu.odu.cs.zomp.dietapp.ui.quests;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,15 +28,18 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.data.models.Character;
-import edu.odu.cs.zomp.dietapp.data.models.Quest;
 import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
 import edu.odu.cs.zomp.dietapp.ui.BaseFragment;
-import edu.odu.cs.zomp.dietapp.ui.battle.BattleActivity;
 import edu.odu.cs.zomp.dietapp.ui.quests.adapters.ActiveQuestAdapter;
 import edu.odu.cs.zomp.dietapp.util.Constants;
 
+import static android.app.Activity.RESULT_OK;
+
 public class QuestsFragment extends BaseFragment
         implements ActiveQuestAdapter.IQuestsAdapter {
+
+    private static final String TAG = QuestsFragment.class.getSimpleName();
+    private static final int RC_DIALOG = 123;
 
     @BindView(R.id.view_quests_root) LinearLayout viewRoot;
     @BindView(R.id.view_quests_headerImg) ImageView headerImg;
@@ -104,20 +108,31 @@ public class QuestsFragment extends BaseFragment
     }
 
     @Override public void questClicked(QuestProgress questProgressItem) {
-        FirebaseFirestore.getInstance()
-                .collection(Constants.DATABASE_PATH_QUESTS)
-                .document(questProgressItem.id)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Quest quest = task.getResult().toObject(Quest.class);
-                        startActivity(BattleActivity.createIntent(getContext(), quest, questProgressItem));
-                    }
-                });
+        Log.d(TAG, questProgressItem.id + " clicked");
+        QuestInfoDialog dialog = QuestInfoDialog.buildDialog(questProgressItem);
+        dialog.setTargetFragment(this, RC_DIALOG);
+        dialog.show(getFragmentManager(), "quest_info");
     }
 
     @OnClick(R.id.view_quests_questHistoryBtn)
     void questHistoryClicked() {
         Toast.makeText(getContext(), "Quest history clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_DIALOG && resultCode == RESULT_OK) {
+            QuestProgress questData = data.getParcelableExtra("questInfo");
+            Log.d(TAG, "Start quest " + questData.id + " selected!");
+//            FirebaseFirestore.getInstance()
+//                    .collection(Constants.DATABASE_PATH_QUESTS)
+//                    .document(activeProgressItem.id)
+//                    .get()
+//                    .addOnSuccessListener(documentSnapshot -> {
+//                        Quest quest = documentSnapshot.toObject(Quest.class);
+//                        startActivity(BattleActivity.createIntent(getContext(), quest, activeProgressItem));
+//                    })
+//                    .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
+        }
     }
 }

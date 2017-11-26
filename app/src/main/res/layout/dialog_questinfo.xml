@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialog_questInfo_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:contentPadding="16dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/dialog_questInfo_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:textSize="24sp"
+                tools:text="Quest Title"/>
+
+            <TextView
+                android:id="@+id/dialog_questInfo_progressFlv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_questInfo_title"
+                android:layout_margin="16dp"
+                android:textSize="16dp"
+                android:textColor="@color/googleBlue"
+                android:text="Current Progress:"/>
+
+
+            <TextView
+                android:id="@+id/dialog_questInfo_progressInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_questInfo_title"
+                android:layout_toEndOf="@id/dialog_questInfo_progressFlv"
+                android:layout_margin="16dp"
+                android:textSize="16dp"
+                android:textColor="@color/googleBlue"
+                tools:text="3 / 5"/>
+
+            <TextView
+                android:id="@+id/dialog_questInfo_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_questInfo_progressFlv"
+                android:gravity="center"
+                tools:text="@tools:sample/lorem/random"/>
+
+            <Button
+                android:id="@+id/dialog_questInfo_startBtn"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:background="@drawable/bg_btn_primary"
+                android:text="Embark"
+                android:textSize="16dp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:layout_below="@id/dialog_questInfo_description"
+                android:layout_alignParentEnd="true"/>
+
+            <TextView
+                android:id="@+id/dialog_questInfo_cancelBtn"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:text="Cancel"
+                android:textSize="16dp"
+                android:layout_below="@id/dialog_questInfo_description"
+                android:layout_toStartOf="@id/dialog_questInfo_startBtn"
+                />
+        </RelativeLayout>
+    </ScrollView>
+</android.support.v7.widget.CardView>
