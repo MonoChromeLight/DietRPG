@@ -119,7 +119,7 @@
                 android:id="@+id/dialog_questSummary_closeBtn"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="56dp"
+                android:layout_marginTop="40dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/bg_btn_primary"
                 android:text="Close"
