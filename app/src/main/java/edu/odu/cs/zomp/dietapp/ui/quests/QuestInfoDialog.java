@@ -34,7 +34,7 @@ public class QuestInfoDialog extends DialogFragment {
 
     private QuestProgress questProgress;
 
-    public static QuestInfoDialog buildDialog(QuestProgress progress) {
+    public static QuestInfoDialog with(@NonNull QuestProgress progress) {
         QuestInfoDialog dialog = new QuestInfoDialog();
         Bundle args = new Bundle();
         args.putParcelable(ARG_QUEST, progress);

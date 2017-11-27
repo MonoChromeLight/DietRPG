@@ -59,6 +59,11 @@ public class ActiveQuestAdapter extends RecyclerView.Adapter<ActiveQuestAdapter.
         this.notifyDataSetChanged();
     }
 
+    public void clear() {
+        this.activeQuests.clear();
+        this.notifyDataSetChanged();
+    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 

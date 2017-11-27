@@ -1,12 +1,17 @@
 package edu.odu.cs.zomp.dietapp.data.models;
 
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Character extends Actor {
+import edu.odu.cs.zomp.dietapp.util.Constants;
+
+public class Character extends Actor implements Parcelable {
 
     public static final int GENDER_MALE = 0;
     public static final int GENDER_FEMALE = 1;
@@ -60,7 +65,17 @@ public class Character extends Actor {
         return augmentedAttributes;
     }
 
-    public void levelUp() {
+    public boolean gainExp(int exp) {
+        this.stats.put(Constants.STAT_EXP, this.stats.get(Constants.STAT_EXP) + exp);
+        if (this.stats.get(Constants.STAT_EXP) >= this.stats.get(Constants.STAT_EXPTOLVL)) {
+            levelUp();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void levelUp() {
         this.stats.put("Level", this.stats.get("Level") + 1);
         this.stats.put("ExpNextLevel", (int) (this.stats.get("ExpNextLevel") * 1.618));
         this.stats.put("Experience", 0);
@@ -83,4 +98,38 @@ public class Character extends Actor {
         map.put("questJournal", questJournal);
         return map;
     }
+
+    @Override public int describeContents() { return 0; }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.gender);
+        dest.writeInt(this.playerClass);
+        dest.writeInt(this.equipment.size());
+        for (Map.Entry<String, ItemEquipment> entry : this.equipment.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeParcelable(entry.getValue(), flags);
+        }
+        dest.writeList(this.inventory);
+        dest.writeTypedList(this.questJournal);
+    }
+
+    protected Character(Parcel in) {
+        this.gender = in.readInt();
+        this.playerClass = in.readInt();
+        int equipmentSize = in.readInt();
+        this.equipment = new HashMap<>(equipmentSize);
+        for (int i = 0; i < equipmentSize; i++) {
+            String key = in.readString();
+            ItemEquipment value = in.readParcelable(ItemEquipment.class.getClassLoader());
+            this.equipment.put(key, value);
+        }
+        this.inventory = new ArrayList<>();
+        in.readList(this.inventory, Item.class.getClassLoader());
+        this.questJournal = in.createTypedArrayList(QuestProgress.CREATOR);
+    }
+
+    public static final Parcelable.Creator<Character> CREATOR = new Parcelable.Creator<Character>() {
+        @Override public Character createFromParcel(Parcel source) { return new Character(source); }
+        @Override public Character[] newArray(int size) { return new Character[size]; }
+    };
 }

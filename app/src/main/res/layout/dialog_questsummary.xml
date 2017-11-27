@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialog_questSummary_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:contentPadding="16dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/dialog_questSummary_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:layout_gravity="center_horizontal"
+                android:textSize="24sp"
+                android:text="Quest Complete!"/>
+
+            <TextView
+                android:id="@+id/dialog_questSummary_expHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="4dp"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:text="Experience Gained:"/>
+
+            <TextView
+                android:id="@+id/dialog_questSummary_expGained"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:textSize="16sp"
+                android:textColor="@color/googleBlue"
+                tools:text="0"/>
+
+            <TextView
+                android:id="@+id/dialog_questSummary_lvlUpIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:textSize="17sp"
+                android:textColor="@color/googleGreen"
+                android:text="Level Up!"
+                android:visibility="visible"/>
+
+        <LinearLayout
+            android:id="@+id/dialog_questSummary_lootFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/dialog_questSummary_lootHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="4dp"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:text="Loot Gained:"/>
+
+
+            <TextView
+                android:id="@+id/dialog_questSummary_lootGained"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:textSize="16sp"
+                android:textColor="@color/googleBlue"
+                tools:text="54 Gold\nItem 1\nItem 2\nItem 3\nItem 4"/>
+        </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/dialog_questSummary_questsUnlockedFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/dialog_questSummary_questsUnlockedHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginBottom="4dp"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:text="New Quests Unlocked"/>
+
+                <TextView
+                    android:id="@+id/dialog_questSummary_questsUnlocked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/googleBlue"
+                    tools:text="New Quest 1\nNew Quest 2"/>
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/dialog_questSummary_closeBtn"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="56dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bg_btn_primary"
+                android:text="Close"
+                android:textSize="16dp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+    </ScrollView>
+</android.support.v7.widget.CardView>

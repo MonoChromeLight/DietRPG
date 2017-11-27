@@ -1,6 +1,9 @@
 package edu.odu.cs.zomp.dietapp.data.models;
 
 
+import android.os.Parcel;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class ItemEquipment extends Item {
@@ -24,4 +27,33 @@ public class ItemEquipment extends Item {
         this.equipmentType = equipmentType;
         this.attributes = attributes;
     }
+
+    @Override public int describeContents() { return 0; }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeInt(this.equipmentType);
+        dest.writeInt(this.attributes.size());
+        for (Map.Entry<String, Integer> entry : this.attributes.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeValue(entry.getValue());
+        }
+    }
+
+    protected ItemEquipment(Parcel in) {
+        super(in);
+        this.equipmentType = in.readInt();
+        int attributesSize = in.readInt();
+        this.attributes = new HashMap<>(attributesSize);
+        for (int i = 0; i < attributesSize; i++) {
+            String key = in.readString();
+            Integer value = (Integer) in.readValue(Integer.class.getClassLoader());
+            this.attributes.put(key, value);
+        }
+    }
+
+    public static final Creator<ItemEquipment> CREATOR = new Creator<ItemEquipment>() {
+        @Override public ItemEquipment createFromParcel(Parcel source) { return new ItemEquipment(source); }
+        @Override public ItemEquipment[] newArray(int size) { return new ItemEquipment[size]; }
+    };
 }

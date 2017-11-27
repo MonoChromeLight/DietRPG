@@ -8,88 +8,104 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import edu.odu.cs.zomp.dietapp.GlideApp;
 import edu.odu.cs.zomp.dietapp.R;
+import edu.odu.cs.zomp.dietapp.data.models.Character;
+import edu.odu.cs.zomp.dietapp.data.models.Enemy;
 import edu.odu.cs.zomp.dietapp.data.models.Quest;
 import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
-import edu.odu.cs.zomp.dietapp.ui.battle.adapters.ActionAdapter;
+import edu.odu.cs.zomp.dietapp.data.models.QuestSummary;
+import edu.odu.cs.zomp.dietapp.util.Constants;
 
 
-public class BattleActivity extends AppCompatActivity
-        implements ActionAdapter.IActionAdapter {
+public class BattleActivity extends AppCompatActivity {
 
     private static final String TAG = BattleActivity.class.getSimpleName();
     private static final String ARG_QUEST = "quest";
-    private static final String ARG_PROGRESS = "user_progress";
+    private static final String ARG_PLAYER = "player";
+    private static final String ARG_PROGRESS = "progress";
+    private static final String ARG_QUEST_SUMMARY = "questSummary";
 
-    @BindView(R.id.view_battle_root) LinearLayout viewRoot;
-    @BindView(R.id.view_battle_bg) ImageView background;
-    @BindView(R.id.view_battle_actionRecycler) RecyclerView actionRecycler;
-    @BindView(R.id.view_battle_playerSprite) ImageView playerSprite;
-    @BindView(R.id.view_battle_enemySprite) ImageView enemySprite;
+    @BindView(R.id.battle_root) RelativeLayout viewRoot;
+    @BindView(R.id.battle_bg) ImageView background;
+    @BindView(R.id.battle_playerSprite) ImageView playerSprite;
+    @BindView(R.id.battle_enemySprite) ImageView enemySprite;
+    @BindView(R.id.battle_primaryActionFrame) LinearLayout primaryActionFrame;
+    @BindView(R.id.battle_action_attack) TextView actionAttack;
+    @BindView(R.id.battle_action_magic) TextView actionMagic;
+    @BindView(R.id.battle_action_items) TextView attackItems;
+    @BindView(R.id.battle_action_flee) TextView attackFlee;
+    @BindView(R.id.battle_actionRecycler) RecyclerView actionRecycler;
 
-    private QuestProgress userProgress;
+    private Character player;
     private Quest quest;
-    private RecyclerView.Adapter adapter;
+    private QuestProgress currentProgress;
+    private List<Enemy> enemies;
+    private Enemy currentEnemy;
+    private QuestSummary questSummary;
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getIntent() != null) {
             quest = getIntent().getParcelableExtra(ARG_QUEST);
-            userProgress = getIntent().getParcelableExtra(ARG_PROGRESS);
+            player = getIntent().getParcelableExtra(ARG_PLAYER);
+
         } else if (savedInstanceState != null) {
             quest = savedInstanceState.getParcelable(ARG_QUEST);
-            userProgress = savedInstanceState.getParcelable(ARG_PROGRESS);
+            player = savedInstanceState.getParcelable(ARG_PLAYER);
         }
 
         setContentView(R.layout.activity_battle);
         ButterKnife.bind(this);
+
+        primaryActionFrame.setVisibility(View.VISIBLE);
+        primaryActionFrame.setEnabled(true);
+        actionRecycler.setVisibility(View.GONE);
+        actionRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        actionRecycler.setHasFixedSize(true);
     }
 
     @Override protected void onStart() {
         super.onStart();
-
-        adapter = new ActionAdapter(this, this);
-        actionRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        actionRecycler.setHasFixedSize(true);
-        actionRecycler.setAdapter(adapter);
-
-        // Load scene sprites
-        InputStream imgStream;
         try {
-            // Background
-            imgStream = getAssets().open("backdrop_forest.png");
+            InputStream imgStream = getAssets().open("backdrop_forest.png");
             Drawable backgroundImgAsset = Drawable.createFromStream(imgStream, null);
             background.setImageDrawable(backgroundImgAsset);
-
-            // Character sprite
-
-            imgStream = getAssets().open("character_male.png");
-            Drawable characterAsset = Drawable.createFromStream(imgStream, null);
-            playerSprite.setImageDrawable(characterAsset);
-
-            // Enemy sprite
-            imgStream = getAssets().open("sprite_dragon.png");
-            Drawable enemyAsset = Drawable.createFromStream(imgStream, null);
-            enemySprite.setImageDrawable(enemyAsset);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }
+
+        initPlayer();
+        loadEnemies();
     }
 
     @Override protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putParcelable(ARG_PLAYER, player);
         outState.putParcelable(ARG_QUEST, quest);
-        outState.putParcelable(ARG_PROGRESS, userProgress);
+        outState.putParcelable(ARG_PROGRESS, currentProgress);
+        outState.putParcelable(ARG_QUEST_SUMMARY, questSummary);
     }
 
     @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -97,18 +113,204 @@ public class BattleActivity extends AppCompatActivity
         if (savedInstanceState == null)
             return;
 
+        player = savedInstanceState.getParcelable(ARG_PLAYER);
         quest = savedInstanceState.getParcelable(ARG_QUEST);
-        userProgress = savedInstanceState.getParcelable(ARG_PROGRESS);
+        currentProgress = savedInstanceState.getParcelable(ARG_PROGRESS);
+        questSummary = savedInstanceState.getParcelable(ARG_QUEST_SUMMARY);
     }
 
-    public static Intent createIntent(Context context, Quest quest, QuestProgress userProgress) {
+    private void initPlayer() {
+        try {
+            String fileName = player.gender == Character.GENDER_MALE ? "character_male.png" : "character_female.png";
+            InputStream is = getAssets().open(fileName);
+            Drawable d = Drawable.createFromStream(is, fileName);
+            playerSprite.setImageDrawable(d);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e.fillInStackTrace());
+        }
+    }
+
+    private void loadEnemies() {
+        enemies = new ArrayList<>();
+        String currentEnemyId = quest.enemies.get(currentProgress.currentSegment);
+        for (String enemyId : quest.enemies) {
+            FirebaseFirestore.getInstance()
+                    .collection(Constants.DATABASE_PATH_ENEMIES)
+                    .document(enemyId)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        Enemy e = documentSnapshot.toObject(Enemy.class);
+                        enemies.add(e);
+                        if (TextUtils.equals(e.id, currentEnemyId))
+                            setEnemy(e);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, e.getMessage(), e.fillInStackTrace());
+                        primaryActionFrame.setEnabled(false);
+                    });
+        }
+    }
+
+    private void setEnemy(Enemy e) {
+        currentEnemy = e;
+        StorageReference enemySpriteRef = FirebaseStorage.getInstance().getReference()
+                .child(Constants.STORAGE_PATH_SPRITES_ENEMIES)
+                .child(currentEnemy.id + ".png");
+
+        GlideApp.with(BattleActivity.this)
+                .load(enemySpriteRef)
+                .into(enemySprite);
+        Log.d(TAG, "Successfully loaded enemy");
+    }
+
+    private void advanceQuestSegment() {
+        // Get the index of the current quest in the user's journal
+        int entryIndex = -1;
+        for (QuestProgress entry : player.questJournal) {
+            if (entry == currentProgress) {
+                entryIndex = player.questJournal.indexOf(entry);
+                break;
+            }
+        }
+
+        if (entryIndex != -1) {
+            currentProgress.currentSegment++;
+            player.questJournal.set(entryIndex, currentProgress);
+
+            // Sync quest progress with Remote database
+            FirebaseFirestore.getInstance()
+                    .collection(Constants.DATABASE_PATH_CHARACTERS)
+                    .document(player.id)
+                    .update("questJournal", player.questJournal)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Updated quest journal: Quest (" + currentProgress.questId + "), progress "
+                                + currentProgress.currentSegment + " -> " + (currentProgress.currentSegment + 1)
+                                + " for user " + player.id);
+
+                        if (currentProgress.currentSegment < currentProgress.totalSegments) {
+                            setEnemy( enemies.get(currentProgress.currentSegment) );
+                        } else {
+                            finishQuest();
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e(TAG,  "Error updating character quest journal", e.fillInStackTrace()));
+        } else {
+            Log.e(TAG, "Error: quest progress not found in quest journal");
+        }
+    }
+
+    // Quests Fragment should handle updating
+    private void finishQuest() {
+        questSummary = new QuestSummary();
+        summarizeNewQuests();
+        summarizeLoot();
+        summarizeExperience();
+    }
+
+    private void exitCheck() {
+        if (player == null || questSummary == null || questSummary.questsUnlocked == null || questSummary.loot == null || questSummary.expGained == 0)
+            return;
+
+        FirebaseFirestore.getInstance()
+                .collection(Constants.DATABASE_PATH_CHARACTERS)
+                .document(player.id)
+                .set(player)
+                .addOnSuccessListener(aVoid -> {
+                    Intent questDataIntent = new Intent();
+                    questDataIntent.putExtra(ARG_PLAYER, player);
+                    questDataIntent.putExtra(ARG_QUEST, quest);
+                    questDataIntent.putExtra(ARG_QUEST_SUMMARY, questSummary);
+                    setResult(RESULT_OK, questDataIntent);
+                    finish();
+                })
+                .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
+    }
+
+    private void summarizeNewQuests() {
+        if (quest.nextQuests != null && quest.nextQuests.size() > 0) {
+            boolean addQuests = true;
+            if (quest.prerequisites != null && quest.prerequisites.size() > 0) {
+                List<String> completedQuests = new ArrayList<>();
+                for (QuestProgress questProgress : player.questJournal) {
+                    if (questProgress.currentSegment == questProgress.totalSegments)
+                        completedQuests.add(questProgress.questId);
+                }
+
+                if (!completedQuests.containsAll(quest.prerequisites)) addQuests = false;
+            }
+
+            if (addQuests) {
+                final int[] counter = {0};
+                for (String questId : quest.nextQuests) {
+                    FirebaseFirestore.getInstance()
+                            .collection(Constants.DATABASE_PATH_QUESTS)
+                            .document(questId)
+                            .get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                Quest newQuest = documentSnapshot.toObject(Quest.class);
+                                QuestProgress journalEntry = new QuestProgress();
+                                journalEntry.questId = newQuest.id;
+                                journalEntry.questName = newQuest.name;
+                                journalEntry.questDescription = newQuest.description;
+                                journalEntry.currentSegment = 0;
+                                journalEntry.totalSegments = newQuest.enemies.size();
+
+                                questSummary.questsUnlocked.add(newQuest.name);
+                                player.questJournal.add(journalEntry);
+                                counter[0]++;
+
+                                if (counter[0] == quest.nextQuests.size())
+                                    exitCheck();
+                            })
+                            .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
+                }
+            } else {
+                questSummary.questsUnlocked = new ArrayList<>();
+                exitCheck();
+            }
+        }
+    }
+
+    private void summarizeLoot() {
+        questSummary.loot = new ArrayList<>();
+        exitCheck();
+    }
+
+    private void summarizeExperience() {
+        int exp = 0;
+        for (Enemy e : enemies)
+            exp += e.stats.get(Constants.STAT_EXP);
+
+        questSummary.userLeveledUp = player.gainExp(exp);
+        questSummary.expGained = exp;
+        exitCheck();
+    }
+
+    public static Intent createIntent(Context context, Character player, Quest quest, QuestProgress progress) {
         Intent intent = new Intent(context, BattleActivity.class);
+        intent.putExtra(ARG_PLAYER, player);
         intent.putExtra(ARG_QUEST, quest);
-        intent.putExtra(ARG_PROGRESS, userProgress);
+        intent.putExtra(ARG_PROGRESS, progress);
         return intent;
     }
 
-    @Override public void actionClicked(int action) {
-        Toast.makeText(this, "Action clicked", Toast.LENGTH_SHORT).show();
+    @OnClick(R.id.battle_action_attack)
+    void attackEnemy() {
+        advanceQuestSegment();
+    }
+
+    @OnClick(R.id.battle_action_magic)
+    void displayMagicList() {
+        Toast.makeText(this, "View spells", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.battle_action_items)
+    void displayItemList() {
+        Toast.makeText(this, "View items", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.battle_action_flee)
+    void flee() {
+        Toast.makeText(this, "Flee", Toast.LENGTH_SHORT).show();
     }
 }

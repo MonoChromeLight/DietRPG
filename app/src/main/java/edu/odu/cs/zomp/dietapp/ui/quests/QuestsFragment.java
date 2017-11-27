@@ -1,8 +1,10 @@
 package edu.odu.cs.zomp.dietapp.ui.quests;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,8 +30,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.data.models.Character;
+import edu.odu.cs.zomp.dietapp.data.models.Quest;
 import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
+import edu.odu.cs.zomp.dietapp.data.models.QuestSummary;
 import edu.odu.cs.zomp.dietapp.ui.BaseFragment;
+import edu.odu.cs.zomp.dietapp.ui.battle.BattleActivity;
 import edu.odu.cs.zomp.dietapp.ui.quests.adapters.ActiveQuestAdapter;
 import edu.odu.cs.zomp.dietapp.util.Constants;
 
@@ -39,7 +44,9 @@ public class QuestsFragment extends BaseFragment
         implements ActiveQuestAdapter.IQuestsAdapter {
 
     private static final String TAG = QuestsFragment.class.getSimpleName();
-    private static final int RC_DIALOG = 123;
+    private static final String ARG_PLAYER = "player";
+    private static final int RC_QUEST_INFO_DIALOG = 123;
+    private static final int RC_BATTLE_ACTIVITY = 234;
 
     @BindView(R.id.view_quests_root) LinearLayout viewRoot;
     @BindView(R.id.view_quests_headerImg) ImageView headerImg;
@@ -48,6 +55,7 @@ public class QuestsFragment extends BaseFragment
     @BindView(R.id.view_quests_emptyQuestListText) TextView emptyQuestListText;
 
     ActiveQuestAdapter activeQuestAdapter = null;
+    private Character player;
 
     public static QuestsFragment newInstance() {
         return new QuestsFragment();
@@ -79,38 +87,47 @@ public class QuestsFragment extends BaseFragment
         questsRecycler.setHasFixedSize(true);
         questsRecycler.setAdapter(activeQuestAdapter);
 
-        loadQuests();
+        loadPlayerData();
     }
 
-    private void loadQuests() {
+    @Override public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ARG_PLAYER, player);
+    }
+
+    @Override public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null)
+            player = savedInstanceState.getParcelable(ARG_PLAYER);
+    }
+
+    private void loadPlayerData() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        firestore
+        FirebaseFirestore.getInstance()
                 .collection(Constants.DATABASE_PATH_CHARACTERS)
                 .document(uid)
                 .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Character character = task.getResult().toObject(Character.class);
-                        List<QuestProgress> questJournal = character.questJournal;
-                        if (questJournal != null && questJournal.size() > 0) {
-                            for (QuestProgress questProgress : questJournal) {
-                                if (questProgress.currentSegment < questProgress.totalSegments)
-                                    activeQuestAdapter.add(questProgress);
-                            }
+                .addOnSuccessListener(documentSnapshot -> {
+                    player = documentSnapshot.toObject(Character.class);
+                    activeQuestAdapter.clear();
+                    List<QuestProgress> questJournal = player.questJournal;
+                    if (questJournal != null && questJournal.size() > 0) {
+                        for (QuestProgress questProgress : questJournal) {
+                            if (questProgress.currentSegment < questProgress.totalSegments)
+                                activeQuestAdapter.add(questProgress);
                         }
-                    } else {
-                        // Display error
-                        questsRecycler.setVisibility(View.GONE);
-                        emptyQuestListText.setVisibility(View.VISIBLE);
                     }
+                })
+                .addOnFailureListener(e -> {
+                    questsRecycler.setVisibility(View.GONE);
+                    emptyQuestListText.setVisibility(View.VISIBLE);
                 });
     }
 
     @Override public void questClicked(QuestProgress questProgressItem) {
-        Log.d(TAG, questProgressItem.id + " clicked");
-        QuestInfoDialog dialog = QuestInfoDialog.buildDialog(questProgressItem);
-        dialog.setTargetFragment(this, RC_DIALOG);
+        Log.d(TAG, questProgressItem.questId + " clicked");
+        QuestInfoDialog dialog = QuestInfoDialog.with(questProgressItem);
+        dialog.setTargetFragment(this, RC_QUEST_INFO_DIALOG);
         dialog.show(getFragmentManager(), "quest_info");
     }
 
@@ -121,18 +138,35 @@ public class QuestsFragment extends BaseFragment
 
     @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_DIALOG && resultCode == RESULT_OK) {
-            QuestProgress questData = data.getParcelableExtra("questInfo");
-            Log.d(TAG, "Start quest " + questData.id + " selected!");
-//            FirebaseFirestore.getInstance()
-//                    .collection(Constants.DATABASE_PATH_QUESTS)
-//                    .document(activeProgressItem.id)
-//                    .get()
-//                    .addOnSuccessListener(documentSnapshot -> {
-//                        Quest quest = documentSnapshot.toObject(Quest.class);
-//                        startActivity(BattleActivity.createIntent(getContext(), quest, activeProgressItem));
-//                    })
-//                    .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
+        if (requestCode == RC_BATTLE_ACTIVITY) {
+            if (resultCode == RESULT_OK) {
+                QuestSummary summary = data.getParcelableExtra("summary");
+                loadPlayerData();
+                QuestSummaryDialog.with(summary).show(getFragmentManager(), "dialog_quest_summary");
+            } else {
+                // Display error dialog
+
+            }
+        } else if (requestCode == RC_QUEST_INFO_DIALOG) {
+            if (resultCode == RESULT_OK) {
+                QuestProgress questData = data.getParcelableExtra("questInfo");
+                Log.d(TAG, "Start quest " + questData.questId + " selected!");
+
+                ProgressDialog pd = new ProgressDialog(getActivity());
+                pd.setMessage("Loading quest: " + questData.questName);
+                pd.show();
+
+                FirebaseFirestore.getInstance()
+                        .collection(Constants.DATABASE_PATH_QUESTS)
+                        .document(questData.questId)
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            Quest quest = documentSnapshot.toObject(Quest.class);
+                            pd.dismiss();
+                            startActivity(BattleActivity.createIntent(getContext(), player, quest, questData));
+                        })
+                        .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
+            }
         }
     }
 }

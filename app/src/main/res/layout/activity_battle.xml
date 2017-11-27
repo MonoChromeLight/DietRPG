@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:id="@+id/view_battle_root"
+    android:id="@+id/battle_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/battle_frame"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp"
+        android:layout_alignParentTop="true">
 
         <ImageView
-            android:id="@+id/view_battle_bg"
+            android:id="@+id/battle_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"/>
 
         <ImageView
-            android:id="@+id/view_battle_playerSprite"
+            android:id="@+id/battle_playerSprite"
             android:layout_width="50dp"
             android:layout_height="70dp"
             android:layout_alignParentStart="true"
@@ -26,18 +27,91 @@
             android:layout_marginStart="50dp"/>
 
         <ImageView
-            android:id="@+id/view_battle_enemySprite"
+            android:id="@+id/battle_enemySprite"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="50dp"
             android:scaleType="fitCenter"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/battle_actionRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:background="@color/black"
+            android:visibility="gone" />
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/view_battle_actionRecycler"
+    <LinearLayout
+        android:id="@+id/battle_primaryActionFrame"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/black" />
-</LinearLayout>
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black">
+
+        <TextView
+            android:id="@+id/battle_action_attack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Attack"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_btn_primary"/>
+
+        <TextView
+            android:id="@+id/battle_action_magic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Magic"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_btn_primary"/>
+
+        <TextView
+            android:id="@+id/battle_action_items"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Items"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_btn_primary"/>
+
+        <TextView
+            android:id="@+id/battle_action_flee"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Flee"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_btn_primary"/>
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/battle_action_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/black"
+        android:visibility="gone"/>
+</RelativeLayout>

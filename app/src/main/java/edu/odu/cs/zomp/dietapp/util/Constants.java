@@ -10,6 +10,7 @@ public final class Constants {
     public static final String DATABASE_PATH_USERS_PRIVATE = "users-private";
     public static final String DATABASE_PATH_USERS_PUBLIC = "users-public";
     public static final String DATABASE_PATH_CHARACTERS = "characters";
+    public static final String DATABASE_PATH_ENEMIES = "enemies";
     public static final String DATABASE_PATH_QUESTS = "quests";
     public static final String DATABASE_PATH_ITEMS = "items";
     public static final String DATABASE_PATH_DIETS = "diets";

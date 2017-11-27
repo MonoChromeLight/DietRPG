@@ -15,6 +15,7 @@ public class Quest implements Parcelable {
     public List<String> prerequisites;
     public List<String> nextQuests;
     public List<String> enemies;
+    public List<String> loot;
 
     public Quest() { }
 
@@ -27,6 +28,7 @@ public class Quest implements Parcelable {
         dest.writeStringList(this.prerequisites);
         dest.writeStringList(this.nextQuests);
         dest.writeList(this.enemies);
+        dest.writeList(this.loot);
     }
 
     protected Quest(Parcel in) {
@@ -37,6 +39,7 @@ public class Quest implements Parcelable {
         this.nextQuests = in.createStringArrayList();
         this.enemies = new ArrayList<>();
         in.readList(this.enemies, Enemy.class.getClassLoader());
+        this.loot = in.createStringArrayList();
     }
 
     public static final Creator<Quest> CREATOR = new Creator<Quest>() {
