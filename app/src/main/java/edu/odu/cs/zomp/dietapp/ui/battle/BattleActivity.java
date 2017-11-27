@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -70,10 +71,12 @@ public class BattleActivity extends AppCompatActivity {
         if (getIntent() != null) {
             quest = getIntent().getParcelableExtra(ARG_QUEST);
             player = getIntent().getParcelableExtra(ARG_PLAYER);
-
+            currentProgress = getIntent().getParcelableExtra(ARG_PROGRESS);
         } else if (savedInstanceState != null) {
             quest = savedInstanceState.getParcelable(ARG_QUEST);
             player = savedInstanceState.getParcelable(ARG_PLAYER);
+            currentProgress = savedInstanceState.getParcelable(ARG_PROGRESS);
+            questSummary = savedInstanceState.getParcelable(ARG_QUEST_SUMMARY);
         }
 
         setContentView(R.layout.activity_battle);
@@ -286,7 +289,7 @@ public class BattleActivity extends AppCompatActivity {
         exitCheck();
     }
 
-    public static Intent createIntent(Context context, Character player, Quest quest, QuestProgress progress) {
+    public static Intent createIntent(Context context, @NonNull Character player, @NonNull Quest quest, @NonNull QuestProgress progress) {
         Intent intent = new Intent(context, BattleActivity.class);
         intent.putExtra(ARG_PLAYER, player);
         intent.putExtra(ARG_QUEST, quest);
