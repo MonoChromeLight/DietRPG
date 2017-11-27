@@ -1,5 +1,6 @@
 package edu.odu.cs.zomp.dietapp.ui.battle;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -65,6 +66,7 @@ public class BattleActivity extends AppCompatActivity {
     private List<Enemy> enemies;
     private Enemy currentEnemy;
     private QuestSummary questSummary;
+    private ProgressDialog pd;
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,8 +204,11 @@ public class BattleActivity extends AppCompatActivity {
         }
     }
 
-    // Quests Fragment should handle updating
     private void finishQuest() {
+        pd = new ProgressDialog(this);
+        pd.setMessage("Victory! Loading...");
+        pd.show();
+
         questSummary = new QuestSummary();
         summarizeNewQuests();
         summarizeLoot();
@@ -224,6 +229,7 @@ public class BattleActivity extends AppCompatActivity {
                     questDataIntent.putExtra(ARG_QUEST, quest);
                     questDataIntent.putExtra(ARG_QUEST_SUMMARY, questSummary);
                     setResult(RESULT_OK, questDataIntent);
+                    pd.dismiss();
                     finish();
                 })
                 .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
