@@ -4,7 +4,6 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +74,7 @@ public class Character extends Actor implements Parcelable {
         return false;
     }
 
+
     private void levelUp() {
         this.stats.put("Level", this.stats.get("Level") + 1);
         this.stats.put("ExpNextLevel", (int) (this.stats.get("ExpNextLevel") * 1.618));
@@ -99,21 +99,8 @@ public class Character extends Actor implements Parcelable {
         return map;
     }
 
-    @Override public int describeContents() { return 0; }
-
-    @Override public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.gender);
-        dest.writeInt(this.playerClass);
-        dest.writeInt(this.equipment.size());
-        for (Map.Entry<String, ItemEquipment> entry : this.equipment.entrySet()) {
-            dest.writeString(entry.getKey());
-            dest.writeParcelable(entry.getValue(), flags);
-        }
-        dest.writeList(this.inventory);
-        dest.writeTypedList(this.questJournal);
-    }
-
     protected Character(Parcel in) {
+        super(in);
         this.gender = in.readInt();
         this.playerClass = in.readInt();
         int equipmentSize = in.readInt();
@@ -123,13 +110,27 @@ public class Character extends Actor implements Parcelable {
             ItemEquipment value = in.readParcelable(ItemEquipment.class.getClassLoader());
             this.equipment.put(key, value);
         }
-        this.inventory = new ArrayList<>();
-        in.readList(this.inventory, Item.class.getClassLoader());
+        this.inventory = in.createTypedArrayList(Item.CREATOR);
         this.questJournal = in.createTypedArrayList(QuestProgress.CREATOR);
     }
 
-    public static final Parcelable.Creator<Character> CREATOR = new Parcelable.Creator<Character>() {
+    public static final Creator<Character> CREATOR = new Creator<Character>() {
         @Override public Character createFromParcel(Parcel source) { return new Character(source); }
         @Override public Character[] newArray(int size) { return new Character[size]; }
     };
+
+    @Override public int describeContents() { return 0; }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeInt(this.gender);
+        dest.writeInt(this.playerClass);
+        dest.writeInt(this.equipment.size());
+        for (Map.Entry<String, ItemEquipment> entry : this.equipment.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeParcelable(entry.getValue(), flags);
+        }
+        dest.writeTypedList(this.inventory);
+        dest.writeTypedList(this.questJournal);
+    }
 }

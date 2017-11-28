@@ -40,7 +40,8 @@ import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
 import edu.odu.cs.zomp.dietapp.data.models.QuestSummary;
 import edu.odu.cs.zomp.dietapp.util.Constants;
 
-
+// TODO: Battle flow
+// TODO: Magic and item recycler setup
 public class BattleActivity extends AppCompatActivity {
 
     private static final String TAG = BattleActivity.class.getSimpleName();
@@ -80,6 +81,9 @@ public class BattleActivity extends AppCompatActivity {
             currentProgress = savedInstanceState.getParcelable(ARG_PROGRESS);
             questSummary = savedInstanceState.getParcelable(ARG_QUEST_SUMMARY);
         }
+
+//        Log.d(TAG, "Player id: " + player.id);
+//        Log.d(TAG, "Player name: " + player.name);
 
         setContentView(R.layout.activity_battle);
         ButterKnife.bind(this);
@@ -122,6 +126,14 @@ public class BattleActivity extends AppCompatActivity {
         quest = savedInstanceState.getParcelable(ARG_QUEST);
         currentProgress = savedInstanceState.getParcelable(ARG_PROGRESS);
         questSummary = savedInstanceState.getParcelable(ARG_QUEST_SUMMARY);
+    }
+
+    @Override protected void onDestroy() {
+        if (pd != null) {
+            pd.dismiss();
+            pd = null;
+        }
+        super.onDestroy();
     }
 
     private void initPlayer() {
@@ -172,26 +184,26 @@ public class BattleActivity extends AppCompatActivity {
         // Get the index of the current quest in the user's journal
         int entryIndex = -1;
         for (QuestProgress entry : player.questJournal) {
-            if (entry == currentProgress) {
+            if (entry.equals(currentProgress)) {
                 entryIndex = player.questJournal.indexOf(entry);
                 break;
             }
         }
 
         if (entryIndex != -1) {
+            // Firestore does not support using .update() on Array objects or individual array objects
+            // So at present, you have to update the entire player object -_-
             currentProgress.currentSegment++;
             player.questJournal.set(entryIndex, currentProgress);
-
             // Sync quest progress with Remote database
             FirebaseFirestore.getInstance()
                     .collection(Constants.DATABASE_PATH_CHARACTERS)
                     .document(player.id)
-                    .update("questJournal", player.questJournal)
+                    .set(player)
                     .addOnSuccessListener(aVoid -> {
                         Log.d(TAG, "Updated quest journal: Quest (" + currentProgress.questId + "), progress "
-                                + currentProgress.currentSegment + " -> " + (currentProgress.currentSegment + 1)
+                                + (currentProgress.currentSegment - 1) + " -> " + (currentProgress.currentSegment)
                                 + " for user " + player.id);
-
                         if (currentProgress.currentSegment < currentProgress.totalSegments) {
                             setEnemy( enemies.get(currentProgress.currentSegment) );
                         } else {
@@ -206,7 +218,7 @@ public class BattleActivity extends AppCompatActivity {
 
     private void finishQuest() {
         pd = new ProgressDialog(this);
-        pd.setMessage("Victory! Loading...");
+        pd.setMessage("Victory!");
         pd.show();
 
         questSummary = new QuestSummary();
@@ -219,23 +231,29 @@ public class BattleActivity extends AppCompatActivity {
         if (player == null || questSummary == null || questSummary.questsUnlocked == null || questSummary.loot == null || questSummary.expGained == 0)
             return;
 
+        Log.d(TAG, "Summary integrity check complete, updating player data...");
         FirebaseFirestore.getInstance()
                 .collection(Constants.DATABASE_PATH_CHARACTERS)
                 .document(player.id)
                 .set(player)
                 .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Success");
                     Intent questDataIntent = new Intent();
                     questDataIntent.putExtra(ARG_PLAYER, player);
                     questDataIntent.putExtra(ARG_QUEST, quest);
                     questDataIntent.putExtra(ARG_QUEST_SUMMARY, questSummary);
                     setResult(RESULT_OK, questDataIntent);
-                    pd.dismiss();
+                    if (pd != null) {
+                        pd.dismiss();
+                        pd = null;
+                    }
                     finish();
                 })
                 .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
     }
 
     private void summarizeNewQuests() {
+        questSummary.questsUnlocked = new ArrayList<>();
         if (quest.nextQuests != null && quest.nextQuests.size() > 0) {
             boolean addQuests = true;
             if (quest.prerequisites != null && quest.prerequisites.size() > 0) {
@@ -274,7 +292,6 @@ public class BattleActivity extends AppCompatActivity {
                             .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
                 }
             } else {
-                questSummary.questsUnlocked = new ArrayList<>();
                 exitCheck();
             }
         }
@@ -297,6 +314,12 @@ public class BattleActivity extends AppCompatActivity {
 
     public static Intent createIntent(Context context, @NonNull Character player, @NonNull Quest quest, @NonNull QuestProgress progress) {
         Intent intent = new Intent(context, BattleActivity.class);
+
+        Log.d(TAG, "Player id: " + player.id);
+        Log.d(TAG, "Player name: " + player.name);
+        Log.d(TAG, "Player gender: " + player.gender);
+        Log.d(TAG, "Player questJournal size: " + player.questJournal.size());
+
         intent.putExtra(ARG_PLAYER, player);
         intent.putExtra(ARG_QUEST, quest);
         intent.putExtra(ARG_PROGRESS, progress);

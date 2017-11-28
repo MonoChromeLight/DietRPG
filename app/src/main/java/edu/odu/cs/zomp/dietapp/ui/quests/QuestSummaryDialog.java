@@ -67,7 +67,7 @@ public class QuestSummaryDialog extends DialogFragment {
 
         // Set loot
         if (summary.loot == null || summary.loot.size() == 0) {
-            lootFrame.setVisibility(View.GONE);
+            lootGained.setText("No loot gained...");
         } else {
             StringBuilder sb = new StringBuilder();
             sb.append(summary.loot.get(0));
@@ -94,6 +94,14 @@ public class QuestSummaryDialog extends DialogFragment {
         }
         
         closeBtn.setOnClickListener(view -> dismiss());
+    }
+
+    @Override public void onResume() {
+        super.onResume();
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
     }
 
     @Override public void onDestroy() {

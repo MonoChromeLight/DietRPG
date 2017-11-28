@@ -45,8 +45,7 @@ public class ReviewStepFragment extends Fragment implements BlockingStep {
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.frag_step_review, container, false);
         ButterKnife.bind(this, v);
         return v;

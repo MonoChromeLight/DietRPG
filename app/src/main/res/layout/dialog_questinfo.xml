@@ -6,6 +6,10 @@
     android:id="@+id/dialog_questInfo_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    android:layout_marginTop="64dp"
+    android:layout_marginBottom="64dp"
     app:contentPadding="16dp">
 
     <ScrollView
@@ -14,75 +18,81 @@
         android:scrollbars="none"
         android:fillViewport="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:minHeight="450dp">
 
             <TextView
                 android:id="@+id/dialog_questInfo_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:textSize="24sp"
+                android:textSize="32sp"
                 tools:text="Quest Title"/>
 
-            <TextView
-                android:id="@+id/dialog_questInfo_progressFlv"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/dialog_questInfo_title"
-                android:layout_margin="16dp"
-                android:textSize="16dp"
-                android:textColor="@color/googleBlue"
-                android:text="Current Progress:"/>
+                android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/dialog_questInfo_progressFlv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/googleBlue"
+                    android:text="Current Progress:"/>
 
-            <TextView
-                android:id="@+id/dialog_questInfo_progressInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/dialog_questInfo_title"
-                android:layout_toEndOf="@id/dialog_questInfo_progressFlv"
-                android:layout_margin="16dp"
-                android:textSize="16dp"
-                android:textColor="@color/googleBlue"
-                tools:text="3 / 5"/>
+                <TextView
+                    android:id="@+id/dialog_questInfo_progressInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/googleBlue"
+                    tools:text="3 / 5" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/dialog_questInfo_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/dialog_questInfo_progressFlv"
+                android:layout_weight="1"
                 android:gravity="center"
+                android:textSize="18sp"
                 tools:text="@tools:sample/lorem/random"/>
 
-            <Button
-                android:id="@+id/dialog_questInfo_startBtn"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:background="@drawable/bg_btn_primary"
-                android:text="Embark"
-                android:textSize="16dp"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:layout_below="@id/dialog_questInfo_description"
-                android:layout_alignParentEnd="true"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end">
 
             <TextView
                 android:id="@+id/dialog_questInfo_cancelBtn"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
                 android:gravity="center"
                 android:text="Cancel"
-                android:textSize="16dp"
-                android:layout_below="@id/dialog_questInfo_description"
-                android:layout_toStartOf="@id/dialog_questInfo_startBtn"
-                />
-        </RelativeLayout>
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/dialog_questInfo_startBtn"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                android:background="@drawable/bg_btn_primary"
+                android:text="Embark"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+            </LinearLayout>
+        </LinearLayout>
     </ScrollView>
 </android.support.v7.widget.CardView>

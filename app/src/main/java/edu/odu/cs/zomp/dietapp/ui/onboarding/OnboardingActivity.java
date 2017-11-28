@@ -111,7 +111,7 @@ public class OnboardingActivity extends BaseActivity implements OnboardingDataMa
 
         // Create userData
 
-        Diet noFilterDiet = new Diet("-KvVBIHEIbRB2hCpQ47n", "No Filter", null);
+        Diet noFilterDiet = new Diet(Constants.INITIAL_DIET_ID, Constants.INITIAL_DIET_NAME, null);
         UserPrivate privateData = new UserPrivate(uid, noFilterDiet, 0);
         UserPublic publicData = new UserPublic(uid, authUser.getDisplayName());
 

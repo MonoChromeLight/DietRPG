@@ -30,6 +30,7 @@ import edu.odu.cs.zomp.dietapp.ui.character.adapters.AttributeAdapter;
 import edu.odu.cs.zomp.dietapp.ui.character.adapters.EquipmentAdapter;
 import edu.odu.cs.zomp.dietapp.util.Constants;
 
+// TODO: Fix ui
 public class CharacterFragment extends BaseFragment {
 
     private static final String TAG = CharacterFragment.class.getSimpleName();

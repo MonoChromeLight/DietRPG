@@ -18,7 +18,6 @@ import edu.odu.cs.zomp.dietapp.ui.character.CharacterFragment;
 import edu.odu.cs.zomp.dietapp.ui.home.HomeFragment;
 import edu.odu.cs.zomp.dietapp.ui.profile.ProfileFragment;
 import edu.odu.cs.zomp.dietapp.ui.quests.QuestsFragment;
-import edu.odu.cs.zomp.dietapp.ui.store.StoreFragment;
 
 import static android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
 
@@ -60,9 +59,6 @@ public class MainActivity extends BaseActivity implements OnNavigationItemSelect
             case R.id.nav_equip:
                 pager.setCurrentItem(3);
                 return true;
-            case R.id.nav_store:
-                pager.setCurrentItem(4);
-                return true;
             default:
                 return false;
         }
@@ -86,15 +82,13 @@ public class MainActivity extends BaseActivity implements OnNavigationItemSelect
                     return QuestsFragment.newInstance();
                 case 3:
                     return CharacterFragment.newInstance();
-                case 4:
-                    return StoreFragment.newInstance();
                 default:
                     return null;
             }
         }
 
         @Override public int getCount() {
-            return 5;
+            return 4;
         }
     }
 }

@@ -6,7 +6,10 @@
     android:id="@+id/dialog_questSummary_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    android:layout_marginTop="64dp"
+    android:layout_marginBottom="64dp"
     app:contentPadding="16dp">
 
     <ScrollView
@@ -18,7 +21,9 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:minHeight="450dp">
+
 
             <TextView
                 android:id="@+id/dialog_questSummary_title"
@@ -26,25 +31,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
                 android:layout_gravity="center_horizontal"
-                android:textSize="24sp"
+                android:textSize="32sp"
                 android:text="Quest Complete!"/>
 
             <TextView
                 android:id="@+id/dialog_questSummary_expHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginBottom="4dp"
                 android:textStyle="bold"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:text="Experience Gained:"/>
 
             <TextView
                 android:id="@+id/dialog_questSummary_expGained"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textColor="@color/googleBlue"
                 tools:text="0"/>
 
@@ -52,8 +55,7 @@
                 android:id="@+id/dialog_questSummary_lvlUpIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:textSize="17sp"
+                android:textSize="18sp"
                 android:textColor="@color/googleGreen"
                 android:text="Level Up!"
                 android:visibility="visible"/>
@@ -69,10 +71,9 @@
                 android:id="@+id/dialog_questSummary_lootHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginBottom="4dp"
                 android:textStyle="bold"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:text="Loot Gained:"/>
 
 
@@ -80,8 +81,7 @@
                 android:id="@+id/dialog_questSummary_lootGained"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textColor="@color/googleBlue"
                 tools:text="54 Gold\nItem 1\nItem 2\nItem 3\nItem 4"/>
         </LinearLayout>
@@ -98,22 +98,19 @@
                     android:id="@+id/dialog_questSummary_questsUnlockedHeading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginBottom="4dp"
                     android:textStyle="bold"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
                     android:text="New Quests Unlocked"/>
 
                 <TextView
                     android:id="@+id/dialog_questSummary_questsUnlocked"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textColor="@color/googleBlue"
                     tools:text="New Quest 1\nNew Quest 2"/>
             </LinearLayout>
-
 
             <Button
                 android:id="@+id/dialog_questSummary_closeBtn"
@@ -123,7 +120,7 @@
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/bg_btn_primary"
                 android:text="Close"
-                android:textSize="16dp"
+                android:textSize="20sp"
                 android:textAllCaps="false"
                 android:textColor="@color/white"/>
         </LinearLayout>

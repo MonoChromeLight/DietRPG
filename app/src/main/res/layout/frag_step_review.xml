@@ -1,38 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="24dp">
 
-    <TextView
+    <LinearLayout
+
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/spacing_large"
-        android:gravity="center"
-        android:text="Welcome to Diet RPG!"
-        android:textSize="24sp"/>
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/onboarding_review_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_margin="@dimen/spacing_large"
-        tools:text="Krombopulous"
-        android:textSize="24sp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_large"
+            android:gravity="center"
+            android:text="Welcome to Diet RPG!"
+            android:textSize="24sp"/>
 
-    <ImageView
-        android:id="@+id/onboarding_review_sprite"
-        android:layout_width="100dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center" />
+        <TextView
+            android:id="@+id/onboarding_review_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="@dimen/spacing_large"
+            tools:text="Krombopulous"
+            android:textSize="24sp"/>
 
-    <TextView
-        android:id="@+id/onboarding_review_className"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="22sp"
-        tools:text="Mage"/>
-</LinearLayout>
+        <ImageView
+            android:id="@+id/onboarding_review_sprite"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/onboarding_review_className"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="22sp"
+            tools:text="Mage"/>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

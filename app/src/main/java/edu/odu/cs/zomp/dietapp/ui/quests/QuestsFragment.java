@@ -40,6 +40,8 @@ import edu.odu.cs.zomp.dietapp.util.Constants;
 
 import static android.app.Activity.RESULT_OK;
 
+// TODO: Quest history
+// TODO: Figure out why quest summary dialog does not appear
 public class QuestsFragment extends BaseFragment
         implements ActiveQuestAdapter.IQuestsAdapter {
 
@@ -63,15 +65,14 @@ public class QuestsFragment extends BaseFragment
 
     public QuestsFragment() { }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_quests, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
 
-    @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         try {
             InputStream imgStream = getContext().getAssets().open("quest_header_img.png");
             Drawable bgImg = Drawable.createFromStream(imgStream, null);
@@ -80,6 +81,10 @@ public class QuestsFragment extends BaseFragment
         } catch (IOException e) {
             Log.e("QuestsFragment", e.getMessage(), e.fillInStackTrace());
         }
+    }
+
+    @Override public void onStart() {
+        super.onStart();
 
         // Load quests
         activeQuestAdapter = new ActiveQuestAdapter(getContext(), this);
@@ -92,11 +97,13 @@ public class QuestsFragment extends BaseFragment
 
     @Override public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(TAG, "saving instance state...");
         outState.putParcelable(ARG_PLAYER, player);
     }
 
     @Override public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
+        Log.d(TAG, "view state restored");
         if (savedInstanceState != null)
             player = savedInstanceState.getParcelable(ARG_PLAYER);
     }
@@ -109,6 +116,7 @@ public class QuestsFragment extends BaseFragment
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     player = documentSnapshot.toObject(Character.class);
+
                     activeQuestAdapter.clear();
                     List<QuestProgress> questJournal = player.questJournal;
                     if (questJournal != null && questJournal.size() > 0) {
@@ -149,8 +157,11 @@ public class QuestsFragment extends BaseFragment
             }
         } else if (requestCode == RC_QUEST_INFO_DIALOG) {
             if (resultCode == RESULT_OK) {
-                QuestProgress questData = data.getParcelableExtra("questInfo");
-                Log.d(TAG, "Start quest " + questData.questId + " selected!");
+                QuestProgress questData = data.getParcelableExtra("questProgress");
+                Log.d(TAG, "Starting quest " + questData.questId);
+
+                if (player == null)
+                    return;
 
                 ProgressDialog pd = new ProgressDialog(getActivity());
                 pd.setMessage("Loading quest: " + questData.questName);
@@ -163,7 +174,12 @@ public class QuestsFragment extends BaseFragment
                         .addOnSuccessListener(documentSnapshot -> {
                             Quest quest = documentSnapshot.toObject(Quest.class);
                             pd.dismiss();
-                            startActivity(BattleActivity.createIntent(getContext(), player, quest, questData));
+
+                            Log.d(TAG, "Player id: " + player.id);
+                            Log.d(TAG, "Player name: " + player.name);
+                            Log.d(TAG, "Player gender: " + player.gender);
+                            Log.d(TAG, "Player questJournal size: " + player.questJournal.size());
+                            startActivityForResult(BattleActivity.createIntent(getContext(), player, quest, questData), RC_BATTLE_ACTIVITY);
                         })
                         .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
             }

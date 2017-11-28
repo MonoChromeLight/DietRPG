@@ -48,4 +48,7 @@ public final class Constants {
     public static final String INITIAL_QUEST_NAME = "Adventure Awaits!";
     public static final String INITAL_QUEST_DESC = "Oh no! Slime blobs are invading town! Clear them out before the town is overrun!";
     public static final int INITIAL_QUEST_SEGMENTS = 2;
+
+    public static final String INITIAL_DIET_ID = "-KvVBIHEIbRB2hCpQ47n";
+    public static final String INITIAL_DIET_NAME = "No Filter";
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,10 +66,19 @@ public class QuestInfoDialog extends DialogFragment {
         cancelBtn.setOnClickListener(view -> dismiss());
         startBtn.setOnClickListener(view -> {
             Intent dataIntent = new Intent();
-            dataIntent.putExtra("questInfo", questProgress);
+            dataIntent.putExtra(ARG_QUEST, questProgress);
             getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, dataIntent);
+            Log.d(TAG, questProgress.questId + " sent to return fragment");
             dismiss();
         });
+    }
+
+    @Override public void onResume() {
+        super.onResume();
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
     }
 
     @Override public void onDestroy() {

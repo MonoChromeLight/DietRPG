@@ -21,9 +21,4 @@
         android:id="@+id/nav_equip"
         android:icon="@drawable/shield"
         android:title="Equip" />
-
-    <item
-        android:id="@+id/nav_store"
-        android:icon="@drawable/shopping_cart"
-        android:title="Store" />
 </menu>
