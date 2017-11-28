@@ -1,25 +1,32 @@
 package edu.odu.cs.zomp.dietapp.net.yummly.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
-public class Attributes {
+public class Attributes implements Parcelable {
 
-    private List<String> course = null;
-    private List<String> holiday = null;
+    public List<String> course = null;
+    public List<String> holiday = null;
 
-    public List<String> getCourse() {
-        return course;
+
+    @Override public int describeContents() { return 0; }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStringList(this.course);
+        dest.writeStringList(this.holiday);
     }
 
-    public void setCourse(List<String> course) {
-        this.course = course;
+    public Attributes() { }
+
+    protected Attributes(Parcel in) {
+        this.course = in.createStringArrayList();
+        this.holiday = in.createStringArrayList();
     }
 
-    public List<String> getHoliday() {
-        return holiday;
-    }
-
-    public void setHoliday(List<String> holiday) {
-        this.holiday = holiday;
-    }
+    public static final Parcelable.Creator<Attributes> CREATOR = new Parcelable.Creator<Attributes>() {
+        @Override public Attributes createFromParcel(Parcel source) { return new Attributes(source); }
+        @Override public Attributes[] newArray(int size) { return new Attributes[size]; }
+    };
 }

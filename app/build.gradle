@@ -80,8 +80,8 @@ dependencies {
 
     // Image libs
     implementation 'de.hdodenhof:circleimageview:2.2.0'
-    implementation 'com.github.bumptech.glide:glide:4.2.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
+    implementation 'com.github.bumptech.glide:glide:4.3.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
 
     // Miscellaneous
     implementation 'com.stepstone.stepper:material-stepper:4.3.0'

@@ -50,7 +50,7 @@ public class MagicAdapter extends RecyclerView.Adapter<MagicAdapter.ViewHolder> 
     }
 
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_item_card_battle_action, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_card_battle_action, parent, false);
         return new ViewHolder(view);
     }
 

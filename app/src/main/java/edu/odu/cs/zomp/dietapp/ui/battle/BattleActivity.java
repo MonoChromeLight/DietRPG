@@ -59,7 +59,7 @@ public class BattleActivity extends AppCompatActivity {
     @BindView(R.id.battle_action_magic) TextView actionMagic;
     @BindView(R.id.battle_action_items) TextView attackItems;
     @BindView(R.id.battle_action_flee) TextView attackFlee;
-    @BindView(R.id.battle_actionRecycler) RecyclerView actionRecycler;
+    @BindView(R.id.battle_action_recycler) RecyclerView actionRecycler;
 
     private Character player;
     private Quest quest;

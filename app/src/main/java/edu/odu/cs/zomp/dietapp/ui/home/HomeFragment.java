@@ -2,6 +2,7 @@ package edu.odu.cs.zomp.dietapp.ui.home;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,8 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -37,6 +38,7 @@ import edu.odu.cs.zomp.dietapp.net.yummly.YummlyClient;
 import edu.odu.cs.zomp.dietapp.net.yummly.models.Match;
 import edu.odu.cs.zomp.dietapp.net.yummly.models.RecipeResult;
 import edu.odu.cs.zomp.dietapp.ui.BaseFragment;
+import edu.odu.cs.zomp.dietapp.ui.recipe.RecipeDetailActivity;
 import edu.odu.cs.zomp.dietapp.util.Constants;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -54,6 +56,7 @@ public class HomeFragment extends BaseFragment implements RecipeAdapter.IHomeAda
     @BindView(R.id.home_recycler_frame) LinearLayout recyclerFrame;
     @BindView(R.id.home_empty_view) LinearLayout emptyViewFrame;
     @BindView(R.id.home_empty_view_message) TextView emptyViewMessage;
+    @BindView(R.id.home_recipe_progressBar) ProgressBar recipeLoadingProgressBar;
     @BindView(R.id.home_recycler) RecyclerView recycler;
 
     private RecipeAdapter adapter = null;
@@ -66,13 +69,13 @@ public class HomeFragment extends BaseFragment implements RecipeAdapter.IHomeAda
 
     public HomeFragment() { }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_home, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
 
-    @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Initialize recycler and adapter
@@ -92,7 +95,7 @@ public class HomeFragment extends BaseFragment implements RecipeAdapter.IHomeAda
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         UserPrivate userPrivateData = task.getResult().toObject(UserPrivate.class);
-                        getWeeklyDietPlan(userPrivateData.activeDiet);
+                        fetchDiets(userPrivateData.activeDiet);
                     } else {
                         Log.e(TAG, task.getException().getMessage(), task.getException().fillInStackTrace());
                     }
@@ -141,14 +144,16 @@ public class HomeFragment extends BaseFragment implements RecipeAdapter.IHomeAda
     @Override public void onDestroy() {
         super.onDestroy();
         disposables.clear();
+        disposables.dispose();
     }
 
-    private void getWeeklyDietPlan(Diet diet) {
+    private void fetchDiets(Diet diet) {
         int maxResults = 100;
         YummlyAPI api = YummlyClient.createService(YummlyAPI.class);
         if (disposables == null)
             disposables = new CompositeDisposable();
 
+        recipeLoadingProgressBar.setVisibility(View.VISIBLE);
         if (diet.queryParam == null || diet.queryParam. isEmpty()) {
             disposables.add(
                     api.getRecipes(maxResults, true)
@@ -188,7 +193,7 @@ public class HomeFragment extends BaseFragment implements RecipeAdapter.IHomeAda
                                 }
 
                                 @Override public void onComplete() {
-
+                                    recipeLoadingProgressBar.setVisibility(View.GONE);
                                 }
                             })
             );
@@ -231,7 +236,7 @@ public class HomeFragment extends BaseFragment implements RecipeAdapter.IHomeAda
                                 }
 
                                 @Override public void onComplete() {
-
+                                    recipeLoadingProgressBar.setVisibility(View.GONE);
                                 }
                             })
             );
@@ -239,6 +244,6 @@ public class HomeFragment extends BaseFragment implements RecipeAdapter.IHomeAda
     }
 
     @Override public void itemClicked(Match recipe) {
-        Toast.makeText(getContext(), recipe.recipeName + " completed", Toast.LENGTH_SHORT).show();
+        startActivity(RecipeDetailActivity.createService(getActivity(), recipe));
     }
 }

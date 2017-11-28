@@ -1,30 +1,42 @@
 package edu.odu.cs.zomp.dietapp.net.yummly.models;
 
 
-public class Flavors {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    private Double piquant;
-    private Double meaty;
-    private Double bitter;
-    private Double sweet;
-    private Double sour;
-    private Double salty;
+public class Flavors implements Parcelable {
 
-    public Double getPiquant() { return piquant; }
-    public void setPiquant(Double piquant) { this.piquant = piquant; }
+    public Double piquant;
+    public Double meaty;
+    public Double bitter;
+    public Double sweet;
+    public Double sour;
+    public Double salty;
 
-    public Double getMeaty() { return meaty; }
-    public void setMeaty(Double meaty) { this.meaty = meaty; }
+    @Override public int describeContents() { return 0; }
 
-    public Double getBitter() { return bitter; }
-    public void setBitter(Double bitter) { this.bitter = bitter; }
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.piquant);
+        dest.writeValue(this.meaty);
+        dest.writeValue(this.bitter);
+        dest.writeValue(this.sweet);
+        dest.writeValue(this.sour);
+        dest.writeValue(this.salty);
+    }
 
-    public Double getSweet() { return sweet; }
-    public void setSweet(Double sweet) { this.sweet = sweet; }
+    public Flavors() { }
 
-    public Double getSour() { return sour; }
-    public void setSour(Double sour) { this.sour = sour; }
+    protected Flavors(Parcel in) {
+        this.piquant = (Double) in.readValue(Double.class.getClassLoader());
+        this.meaty = (Double) in.readValue(Double.class.getClassLoader());
+        this.bitter = (Double) in.readValue(Double.class.getClassLoader());
+        this.sweet = (Double) in.readValue(Double.class.getClassLoader());
+        this.sour = (Double) in.readValue(Double.class.getClassLoader());
+        this.salty = (Double) in.readValue(Double.class.getClassLoader());
+    }
 
-    public Double getSalty() { return salty; }
-    public void setSalty(Double salty) { this.salty = salty; }
+    public static final Parcelable.Creator<Flavors> CREATOR = new Parcelable.Creator<Flavors>() {
+        @Override public Flavors createFromParcel(Parcel source) { return new Flavors(source); }
+        @Override public Flavors[] newArray(int size) { return new Flavors[size]; }
+    };
 }

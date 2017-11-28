@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,13 +34,13 @@ import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
 import edu.odu.cs.zomp.dietapp.data.models.QuestSummary;
 import edu.odu.cs.zomp.dietapp.ui.BaseFragment;
 import edu.odu.cs.zomp.dietapp.ui.battle.BattleActivity;
+import edu.odu.cs.zomp.dietapp.ui.history.QuestArchiveActivity;
 import edu.odu.cs.zomp.dietapp.ui.quests.adapters.ActiveQuestAdapter;
 import edu.odu.cs.zomp.dietapp.util.Constants;
 
 import static android.app.Activity.RESULT_OK;
 
 // TODO: Quest history
-// TODO: Figure out why quest summary dialog does not appear
 public class QuestsFragment extends BaseFragment
         implements ActiveQuestAdapter.IQuestsAdapter {
 
@@ -141,7 +140,7 @@ public class QuestsFragment extends BaseFragment
 
     @OnClick(R.id.view_quests_questHistoryBtn)
     void questHistoryClicked() {
-        Toast.makeText(getContext(), "Quest history clicked", Toast.LENGTH_SHORT).show();
+        startActivity(QuestArchiveActivity.createIntent(getActivity(), player.questJournal));
     }
 
     @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {

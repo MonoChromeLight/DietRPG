@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialog_questArchive_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    android:layout_marginTop="64dp"
+    android:layout_marginBottom="64dp"
+    app:contentPadding="16dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:minHeight="450dp">
+
+            <TextView
+                android:id="@+id/dialog_questArchive_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="32sp"
+                tools:text="Quest Title"/>
+
+            <TextView
+                android:id="@+id/dialog_questArchive_progressInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:textSize="18sp"
+                android:textColor="@color/googleBlue"
+                tools:text="Completed!" />
+
+            <TextView
+                android:id="@+id/dialog_questArchive_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="18sp"
+                tools:text="@tools:sample/lorem/random"/>
+
+            <Button
+                android:id="@+id/dialog_questArchive_closeBtn"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                android:background="@drawable/bg_btn_primary"
+                android:text="Close"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </ScrollView>
+</android.support.v7.widget.CardView>
