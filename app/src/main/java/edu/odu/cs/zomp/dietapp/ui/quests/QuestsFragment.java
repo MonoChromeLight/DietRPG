@@ -40,7 +40,7 @@ import edu.odu.cs.zomp.dietapp.util.Constants;
 
 import static android.app.Activity.RESULT_OK;
 
-// TODO: Quest history
+
 public class QuestsFragment extends BaseFragment
         implements ActiveQuestAdapter.IQuestsAdapter {
 

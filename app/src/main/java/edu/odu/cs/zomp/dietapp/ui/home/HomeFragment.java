@@ -45,7 +45,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
-// TODO: Recipe Details activity
+
 public class HomeFragment extends BaseFragment implements RecipeAdapter.IHomeAdapter {
 
     private static final String TAG =  HomeFragment.class.getSimpleName();
