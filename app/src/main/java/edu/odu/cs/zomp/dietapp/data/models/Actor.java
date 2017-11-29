@@ -35,9 +35,25 @@ public class Actor implements Parcelable {
     public Map<String, Integer> attributes;
 
 
-    public Actor() {
-        this.id = null;
+    @Override public int describeContents() { return 0; }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.name);
+        dest.writeInt(this.stats.size());
+        for (Map.Entry<String, Integer> entry : this.stats.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeValue(entry.getValue());
+        }
+        dest.writeInt(this.attributes.size());
+        for (Map.Entry<String, Integer> entry : this.attributes.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeValue(entry.getValue());
+        }
     }
+
+    public Actor() { }
 
     public Actor(String id, String name, Map<String, Integer> stats, Map<String, Integer> attributes) {
         this.id = id;
@@ -66,24 +82,14 @@ public class Actor implements Parcelable {
     }
 
     public static final Creator<Actor> CREATOR = new Creator<Actor>() {
-        @Override public Actor createFromParcel(Parcel in) { return new Actor(in); }
-        @Override public Actor[] newArray(int size) { return new Actor[size]; }
+        @Override
+        public Actor createFromParcel(Parcel source) {
+            return new Actor(source);
+        }
+
+        @Override
+        public Actor[] newArray(int size) {
+            return new Actor[size];
+        }
     };
-
-    @Override public int describeContents() { return 0; }
-
-    @Override public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeString(this.name);
-        dest.writeInt(this.stats.size());
-        for (Map.Entry<String, Integer> entry : this.stats.entrySet()) {
-            dest.writeString(entry.getKey());
-            dest.writeValue(entry.getValue());
-        }
-        dest.writeInt(this.attributes.size());
-        for (Map.Entry<String, Integer> entry : this.attributes.entrySet()) {
-            dest.writeString(entry.getKey());
-            dest.writeValue(entry.getValue());
-        }
-    }
 }

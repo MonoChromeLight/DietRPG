@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,8 +27,12 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,14 +41,19 @@ import edu.odu.cs.zomp.dietapp.GlideApp;
 import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.data.models.Character;
 import edu.odu.cs.zomp.dietapp.data.models.Enemy;
+import edu.odu.cs.zomp.dietapp.data.models.Item;
 import edu.odu.cs.zomp.dietapp.data.models.Quest;
 import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
 import edu.odu.cs.zomp.dietapp.data.models.QuestSummary;
+import edu.odu.cs.zomp.dietapp.ui.battle.adapters.ItemActionAdapter;
+import edu.odu.cs.zomp.dietapp.ui.battle.adapters.MagicActionAdapter;
 import edu.odu.cs.zomp.dietapp.util.Constants;
+import edu.odu.cs.zomp.dietapp.util.ItemLibrary;
+import edu.odu.cs.zomp.dietapp.util.SpellLibrary;
 
-// TODO: Battle flow
-// TODO: Magic and item recycler setup
-public class BattleActivity extends AppCompatActivity {
+
+public class BattleActivity extends AppCompatActivity
+        implements ItemActionAdapter.ItemActionInterface, MagicActionAdapter.MagicActionInterface {
 
     private static final String TAG = BattleActivity.class.getSimpleName();
     private static final String ARG_QUEST = "quest";
@@ -59,6 +70,8 @@ public class BattleActivity extends AppCompatActivity {
     @BindView(R.id.battle_action_magic) TextView actionMagic;
     @BindView(R.id.battle_action_items) TextView attackItems;
     @BindView(R.id.battle_action_flee) TextView attackFlee;
+    @BindView(R.id.battle_progressBar) ProgressBar progressBar;
+    @BindView(R.id.battle_message) TextView message;
     @BindView(R.id.battle_action_recycler) RecyclerView actionRecycler;
 
     private Character player;
@@ -68,6 +81,7 @@ public class BattleActivity extends AppCompatActivity {
     private Enemy currentEnemy;
     private QuestSummary questSummary;
     private ProgressDialog pd;
+    private int turn = 0;
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +119,7 @@ public class BattleActivity extends AppCompatActivity {
             Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }
 
+        displayProgressBar();
         initPlayer();
         loadEnemies();
     }
@@ -134,6 +149,15 @@ public class BattleActivity extends AppCompatActivity {
             pd = null;
         }
         super.onDestroy();
+    }
+
+    @Override public void onBackPressed() {
+        if (actionRecycler.getVisibility() == View.VISIBLE) {
+            actionRecycler.setAdapter(null);
+            displayPrimaryActions();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void initPlayer() {
@@ -178,9 +202,38 @@ public class BattleActivity extends AppCompatActivity {
                 .load(enemySpriteRef)
                 .into(enemySprite);
         Log.d(TAG, "Successfully loaded enemy");
+
+        turn = 0;
+        displayPrimaryActions();
+    }
+
+    private void resolveTurn() {
+        // Resolve lingering debuffs
+//        boolean enemyKilled = false;
+//        if (enemyKilled) {
+//            turn = 0;
+//            Runnable enemyKilledAction = this::advanceQuestSegment;
+//            displayMessage(currentEnemy.name + " defeated!", enemyKilledAction);
+//        } else {
+//            resolveTurn();
+//        }
+
+        // Advance turn
+        turn++;
+        if (turn % 2 == 0) {
+            // Enemy Turn
+            // TODO: Replace with actual enemy logic
+            Runnable enemyAction = this::resolveTurn;
+            displayMessage("Enemy misses!", enemyAction);
+        } else if (turn % 2 == 1) {
+            // Player turn
+            displayPrimaryActions();
+        }
     }
 
     private void advanceQuestSegment() {
+        displayProgressBar();
+
         // Get the index of the current quest in the user's journal
         int entryIndex = -1;
         for (QuestProgress entry : player.questJournal) {
@@ -217,6 +270,7 @@ public class BattleActivity extends AppCompatActivity {
     }
 
     private void finishQuest() {
+        progressBar.setVisibility(View.GONE);
         pd = new ProgressDialog(this);
         pd.setMessage("Victory!");
         pd.show();
@@ -228,7 +282,7 @@ public class BattleActivity extends AppCompatActivity {
     }
 
     private void exitCheck() {
-        if (player == null || questSummary == null || questSummary.questsUnlocked == null || questSummary.loot == null || questSummary.expGained == 0)
+        if (player == null || questSummary == null || questSummary.questsUnlocked == null || questSummary.loot == null || questSummary.expMap == null)
             return;
 
         Log.d(TAG, "Summary integrity check complete, updating player data...");
@@ -249,7 +303,7 @@ public class BattleActivity extends AppCompatActivity {
                     }
                     finish();
                 })
-                .addOnFailureListener(e -> Log.e(TAG, e.getMessage(), e.fillInStackTrace()));
+                .addOnFailureListener(Throwable::printStackTrace);
     }
 
     private void summarizeNewQuests() {
@@ -303,12 +357,15 @@ public class BattleActivity extends AppCompatActivity {
     }
 
     private void summarizeExperience() {
+        Map<String, Integer> expTable = new HashMap<>();
         int exp = 0;
-        for (Enemy e : enemies)
+        for (Enemy e : enemies) {
             exp += e.stats.get(Constants.STAT_EXP);
+            expTable.put(e.name, e.stats.get(Constants.STAT_EXP));
+        }
 
         questSummary.userLeveledUp = player.gainExp(exp);
-        questSummary.expGained = exp;
+        questSummary.expMap = expTable;
         exitCheck();
     }
 
@@ -328,21 +385,119 @@ public class BattleActivity extends AppCompatActivity {
 
     @OnClick(R.id.battle_action_attack)
     void attackEnemy() {
-        advanceQuestSegment();
+        Log.d(TAG, "attacking enemy");
+        boolean enemyKilled = currentEnemy.takeDamage(player.attributes.get(Constants.ATTRIBUTE_STR));
+        if (enemyKilled) {
+            Runnable action = this::advanceQuestSegment;
+            displayMessage(currentEnemy.name + " defeated!", action);
+        } else {
+            resolveTurn();
+        }
     }
 
     @OnClick(R.id.battle_action_magic)
     void displayMagicList() {
-        Toast.makeText(this, "View spells", Toast.LENGTH_SHORT).show();
+        displayProgressBar();
+        MagicActionAdapter adapter = new MagicActionAdapter(this, player.spellbook, this);
+        displayActions(adapter);
     }
 
     @OnClick(R.id.battle_action_items)
     void displayItemList() {
-        Toast.makeText(this, "View items", Toast.LENGTH_SHORT).show();
+        displayProgressBar();
+        ItemActionAdapter adapter = new ItemActionAdapter(this, player.inventory, this);
+        displayActions(adapter);
     }
 
     @OnClick(R.id.battle_action_flee)
     void flee() {
         Toast.makeText(this, "Flee", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override public void useItem(Item item) {
+        Log.d(TAG, "Using item " + item.name);
+        String message = player.name + " uses " + item.name;
+        Runnable action = () -> {
+            try {
+                Object[] params = new Object[] { player };
+                Method spell = ItemLibrary.class.getDeclaredMethod(item.name.toLowerCase(), params.getClass());
+                spell.invoke(ItemLibrary.class, params);
+                resolveTurn();
+            } catch (NoSuchMethodException e) {
+                Log.e(TAG, "Unable to find item", e.fillInStackTrace());
+                resolveTurn();
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        };
+        displayMessage(message, action);
+    }
+
+    @Override public void castSpell(String spellName) {
+        Log.d(TAG, "Casting spell " + spellName);
+        String message = player.name + " uses " + spellName;
+        Runnable action = () -> {
+            try {
+                Object[] params = new Object[] { player, currentEnemy };
+                Method spell = SpellLibrary.class.getDeclaredMethod(spellName.toLowerCase(), Character.class, Enemy.class);
+                spell.invoke(SpellLibrary.class, params);
+
+                boolean enemyKilled = currentEnemy.takeDamage(player.attributes.get(Constants.ATTRIBUTE_INT));
+                if (enemyKilled) {
+                    Runnable enemyKilledAction = this::advanceQuestSegment;
+                    displayMessage(currentEnemy.name + " defeated!", enemyKilledAction);
+                } else {
+                    resolveTurn();
+                }
+            } catch (NoSuchMethodException e) {
+                Log.e(TAG, "Unable to find spell ", e.fillInStackTrace());
+                resolveTurn();
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        };
+        displayMessage(message, action);
+    }
+
+    private void displayPrimaryActions() {
+        primaryActionFrame.setVisibility(View.VISIBLE);
+        actionRecycler.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+        message.setVisibility(View.GONE);
+    }
+
+    private void displayMessage(String messageToDisplay, Runnable postMessageAction) {
+        message.setVisibility(View.VISIBLE);
+        primaryActionFrame.setVisibility(View.GONE);
+        actionRecycler.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+
+        message.setText(messageToDisplay);
+        new Handler().postDelayed(postMessageAction, 2000);
+    }
+
+    private void displayProgressBar() {
+        actionRecycler.setVisibility(View.VISIBLE);
+        message.setVisibility(View.GONE);
+        primaryActionFrame.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+    }
+
+    private void displayActions(MagicActionAdapter adapter) {
+        primaryActionFrame.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+        message.setVisibility(View.GONE);
+
+        actionRecycler.setAdapter(adapter);
+        actionRecycler.setVisibility(View.VISIBLE);
+    }
+
+    private void displayActions(ItemActionAdapter adapter) {
+        primaryActionFrame.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+        message.setVisibility(View.GONE);
+
+        actionRecycler.setAdapter(adapter);
+        actionRecycler.setVisibility(View.VISIBLE);
     }
 }

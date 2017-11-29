@@ -1,4 +1,4 @@
-package edu.odu.cs.zomp.dietapp.ui.history;
+package edu.odu.cs.zomp.dietapp.ui.archive;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

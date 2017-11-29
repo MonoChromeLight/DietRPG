@@ -1,4 +1,4 @@
-package edu.odu.cs.zomp.dietapp.ui.history;
+package edu.odu.cs.zomp.dietapp.ui.archive;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +16,14 @@ import butterknife.ButterKnife;
 import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
 import edu.odu.cs.zomp.dietapp.ui.BaseActivity;
-import edu.odu.cs.zomp.dietapp.ui.history.adapters.QuestArchiveAdapter;
+import edu.odu.cs.zomp.dietapp.ui.archive.adapters.QuestArchiveAdapter;
 
 public class QuestArchiveActivity extends BaseActivity implements QuestArchiveAdapter.QuestArchiveInterface {
 
     private static final String TAG = QuestArchiveActivity.class.getSimpleName();
     private static final String ARG_QUESTS = "quests";
 
+    @BindView(R.id.questArchive_toolbar) Toolbar toolbar;
     @BindView(R.id.questArchive_recycler) RecyclerView recycler;
 
     private List<QuestProgress> quests;
@@ -32,6 +34,7 @@ public class QuestArchiveActivity extends BaseActivity implements QuestArchiveAd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questarchive);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
     }
 
     @Override protected void onStart() {

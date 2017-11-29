@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +26,7 @@ public class DietPickerActivity extends AppCompatActivity implements DietPickerA
 
     private static final String TAG = DietPickerActivity.class.getSimpleName();
 
+    @BindView(R.id.dietpicker_toolbar) Toolbar toolbar;
     @BindView(R.id.dietpicker_recycler) RecyclerView dietsRecycler;
 
     FirebaseFirestore firestore = null;
@@ -34,8 +36,11 @@ public class DietPickerActivity extends AppCompatActivity implements DietPickerA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diet_picker);
         ButterKnife.bind(this);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override protected void onStart() {
@@ -52,12 +57,11 @@ public class DietPickerActivity extends AppCompatActivity implements DietPickerA
         firestore
                 .collection(Constants.DATABASE_PATH_DIETS)
                 .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (DocumentSnapshot document : task.getResult())
-                            adapter.add(document.toObject(Diet.class));
-                    }
-                });
+                .addOnSuccessListener(documentSnapshots -> {
+                    for (DocumentSnapshot document : documentSnapshots)
+                        adapter.add(document.toObject(Diet.class));
+                })
+                .addOnFailureListener(Throwable::fillInStackTrace);
     }
 
     public static Intent createIntent(Context context) {

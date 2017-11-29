@@ -50,13 +50,13 @@ public class MainActivity extends BaseActivity implements OnNavigationItemSelect
             case R.id.nav_home:
                 pager.setCurrentItem(0);
                 return true;
-            case R.id.nav_profile:
+            case R.id.nav_quests:
                 pager.setCurrentItem(1);
                 return true;
-            case R.id.nav_quests:
+            case R.id.nav_equip:
                 pager.setCurrentItem(2);
                 return true;
-            case R.id.nav_equip:
+            case R.id.nav_profile:
                 pager.setCurrentItem(3);
                 return true;
             default:
@@ -77,18 +77,16 @@ public class MainActivity extends BaseActivity implements OnNavigationItemSelect
                 case 0:
                     return HomeFragment.newInstance();
                 case 1:
-                    return ProfileFragment.newInstance();
-                case 2:
                     return QuestsFragment.newInstance();
-                case 3:
+                case 2:
                     return CharacterFragment.newInstance();
+                case 3:
+                    return ProfileFragment.newInstance();
                 default:
                     return null;
             }
         }
 
-        @Override public int getCount() {
-            return 4;
-        }
+        @Override public int getCount() { return 4; }
     }
 }

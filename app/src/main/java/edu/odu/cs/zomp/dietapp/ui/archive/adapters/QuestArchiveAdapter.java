@@ -1,4 +1,4 @@
-package edu.odu.cs.zomp.dietapp.ui.history.adapters;
+package edu.odu.cs.zomp.dietapp.ui.archive.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;

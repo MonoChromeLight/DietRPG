@@ -1,35 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/view_battle_action_root"
-    android:layout_width="match_parent"
+<TextView
+    android:id="@+id/item_battle_actionBtn"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:minWidth="100dp"
+    android:layout_margin="8dp"
     android:layout_weight="1"
-    android:layout_height="56dp"
-    android:layout_margin="4dp"
-    app:contentPadding="@dimen/spacing_normal">
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/view_battle_action_icon"
-            android:layout_width="30dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/spacing_normal"
-            android:src="@drawable/shield"/>
-
-        <TextView
-            android:id="@+id/view_battle_action_text"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Text"
-            android:textColor="@color/textPrimary"
-            android:textSize="20sp" />
-    </LinearLayout>
-</android.support.v7.widget.CardView>
+    android:gravity="center"
+    android:text="Flee"
+    android:textStyle="bold"
+    android:textSize="18sp"
+    android:textColor="@color/white"
+    android:background="@drawable/bg_btn_primary"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

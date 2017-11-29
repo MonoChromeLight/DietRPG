@@ -5,13 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,6 +22,7 @@ import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.net.yummly.models.Match;
 import edu.odu.cs.zomp.dietapp.ui.BaseActivity;
 import edu.odu.cs.zomp.dietapp.ui.recipe.adapters.IngredientAdapter;
+import edu.odu.cs.zomp.dietapp.util.Constants;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 
@@ -27,6 +31,7 @@ public class RecipeDetailActivity extends BaseActivity {
     private static final String TAG = RecipeDetailActivity.class.getSimpleName();
     private static final String ARG_RECIPE = "recipe";
 
+    @BindView(R.id.recipe_root) CoordinatorLayout viewRoot;
     @BindView(R.id.recipe_appbar) AppBarLayout appBar;
     @BindView(R.id.recipe_headerBg) ImageView headerBg;
     @BindView(R.id.recipe_ratingBar) MaterialRatingBar ratingBar;
@@ -35,6 +40,7 @@ public class RecipeDetailActivity extends BaseActivity {
     @BindView(R.id.recipe_fab) FloatingActionButton fab;
 
     private Match recipe;
+    private boolean bonusGained = false;
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         recipe = getIntent().getParcelableExtra(ARG_RECIPE);
@@ -57,7 +63,20 @@ public class RecipeDetailActivity extends BaseActivity {
                 .load(recipe.smallImageUrls.get(0))
                 .into(headerBg);
 
-        fab.setOnClickListener(view -> Toast.makeText(RecipeDetailActivity.this, "Fab clicked", Toast.LENGTH_SHORT).show());
+        fab.setOnClickListener(view -> {
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            if (uid != null && !bonusGained) {
+                FirebaseFirestore.getInstance()
+                        .collection(Constants.DATABASE_PATH_CHARACTERS)
+                        .document(uid)
+                        .update("dietMultiplier", 1.2)
+                        .addOnSuccessListener(aVoid -> {
+                            fab.setImageResource(R.drawable.check);
+                            bonusGained = true;
+                            Snackbar.make(viewRoot, "Multiplier bonus activated!", Snackbar.LENGTH_SHORT).show();
+                        });
+            }
+        });
     }
 
     @Override protected void onSaveInstanceState(Bundle outState) {

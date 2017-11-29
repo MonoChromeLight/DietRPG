@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -17,6 +18,7 @@ import edu.odu.cs.zomp.dietapp.R;
 import edu.odu.cs.zomp.dietapp.ui.BaseActivity;
 import edu.odu.cs.zomp.dietapp.ui.MainActivity;
 import edu.odu.cs.zomp.dietapp.ui.onboarding.OnboardingActivity;
+import io.fabric.sdk.android.Fabric;
 
 
 public class LoginActivity extends BaseActivity {
@@ -27,6 +29,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
     }
 
     @Override protected void onStart() {
@@ -36,9 +39,9 @@ public class LoginActivity extends BaseActivity {
         // DEBUG: For some reason user account data are not getting cleared between app reinstalls
 //        AuthUI.getInstance().signOut(this);
 
-        auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null) {
-            Log.d(TAG, "User " + auth.getCurrentUser().getUid() + " logged in");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Log.d(TAG, "User " + user.getUid() + " logged in");
             checkUserProfile();
         } else {
             Log.d(TAG, "Starting auth for result");
@@ -58,9 +61,10 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "Returned from login");
-        checkUserProfile();
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK)
+            checkUserProfile();
     }
 
     private void checkUserProfile() {
@@ -71,21 +75,16 @@ public class LoginActivity extends BaseActivity {
                     .collection("characters")
                     .document(authUser.getUid())
                     .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().exists()) {
-                                startActivity(MainActivity.createIntent(LoginActivity.this));
-                                finish();
-                            } else {
-                                startActivity(OnboardingActivity.createIntent(LoginActivity.this));
-                                finish();
-                            }
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            startActivity(MainActivity.createIntent(LoginActivity.this));
+                            finish();
                         } else {
-                            Log.e(TAG,
-                                    task.getException().getMessage(),
-                                    task.getException().fillInStackTrace());
+                            startActivity(OnboardingActivity.createIntent(LoginActivity.this));
+                            finish();
                         }
-                    });
+                    })
+                    .addOnFailureListener(Throwable::fillInStackTrace);
         }
     }
 

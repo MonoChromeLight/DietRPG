@@ -55,6 +55,7 @@
         app:layout_anchor="@id/recipe_appbar"
         app:layout_anchorGravity="bottom|end"
         app:backgroundTint="@color/googleGreen"
+        android:scaleType="center"
         android:src="@drawable/circle"/>
 
     <ListView

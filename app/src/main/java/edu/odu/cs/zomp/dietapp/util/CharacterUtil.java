@@ -1,5 +1,7 @@
 package edu.odu.cs.zomp.dietapp.util;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,6 +91,7 @@ public class CharacterUtil {
         character.gender = gender;
         character.playerClass = playerClass;
         character.inventory = new ArrayList<>();
+        character.spellbook = new ArrayList<>();
         character.questJournal = new ArrayList<>();
 
         QuestProgress starterQuestProgess = new QuestProgress(
@@ -101,12 +104,17 @@ public class CharacterUtil {
         switch (playerClass) {
             case Character.CLASS_WARRIOR:
                 character.attributes = CharacterUtil.getStartingWarriorAttributes();
+                character.spellbook.add("Rage");
                 break;
             case Character.CLASS_MAGE:
                 character.attributes = CharacterUtil.getStartingMageAttributes();
+                character.spellbook.add("Fireball");
                 break;
             case Character.CLASS_ROGUE:
                 character.attributes = CharacterUtil.getStartingRogueAttributes();
+                character.spellbook.add("Evade");
+            default:
+                Log.e("CharUtil", "Invalid class");
         }
 
         // Update stat values to reflect dynamic attributes from player class
@@ -117,7 +125,7 @@ public class CharacterUtil {
         character.stats.put(STAT_MAX_MANA, 30); // Max mana
         character.stats.put(STAT_LEVEL, 1); // Level
         character.stats.put(STAT_EXP, 0); // Exp
-        character.stats.put(STAT_EXPTOLVL, 1000); // Exp to level
+        character.stats.put(STAT_EXPTOLVL, 100); // Exp to level
 
         character.equipment = new HashMap<>();
         character.equipment.put(SLOT_HELM, null);

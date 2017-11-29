@@ -15,8 +15,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -37,7 +35,6 @@ public class ProfileFragment extends BaseFragment {
     @BindView(R.id.profile_avatar) CircleImageView avatar;
     @BindView(R.id.profile_username) TextView username;
     @BindView(R.id.profile_dietCard) CardView dietCard;
-    @BindView(R.id.profile_goldAmount) TextView goldIndicator;
     @BindView(R.id.profile_dietCard_dietName) TextView activeDietBtn;
     @BindView(R.id.profile_logout_btn) Button logoutBtn;
 
@@ -87,7 +84,6 @@ public class ProfileFragment extends BaseFragment {
                     .addOnSuccessListener(documentSnapshot -> {
                         privateUserData = documentSnapshot.toObject(UserPrivate.class);
                         activeDietBtn.setText(privateUserData.activeDiet.title);
-                        goldIndicator.setText(String.format(Locale.US, "%d", privateUserData.gold));
                     });
 
             // User Avatar

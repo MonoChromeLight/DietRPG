@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import edu.odu.cs.zomp.dietapp.R;
@@ -59,7 +57,16 @@ public class QuestSummaryDialog extends DialogFragment {
             return;
 
         // Set experience
-        expGained.setText(String.format(Locale.US, "%d", summary.expGained));
+        StringBuilder sb = new StringBuilder();
+        for (String enemyName : summary.expMap.keySet()) {
+            if (sb.length() > 0)
+                sb.append("\n");
+            sb.append(enemyName);
+            sb.append("\t");
+            sb.append(summary.expMap.get(enemyName));
+        }
+
+        expGained.setText(sb.toString());
         if (summary.userLeveledUp)
             levelUpIndicator.setVisibility(View.VISIBLE);
         else
@@ -69,7 +76,7 @@ public class QuestSummaryDialog extends DialogFragment {
         if (summary.loot == null || summary.loot.size() == 0) {
             lootGained.setText("No loot gained...");
         } else {
-            StringBuilder sb = new StringBuilder();
+            sb = new StringBuilder();
             sb.append(summary.loot.get(0));
             for (int i = 1; i < summary.loot.size(); i++) {
                 sb.append("\n");
@@ -83,7 +90,7 @@ public class QuestSummaryDialog extends DialogFragment {
         if (summary.questsUnlocked == null || summary.questsUnlocked.size() == 0) {
             questsUnlockedFrame.setVisibility(View.GONE);
         } else {
-            StringBuilder sb = new StringBuilder();
+            sb = new StringBuilder();
             sb.append(summary.questsUnlocked.get(0));
             for (int i = 1; i < summary.questsUnlocked.size(); i++) {
                 sb.append("\n");
@@ -93,7 +100,7 @@ public class QuestSummaryDialog extends DialogFragment {
             questsUnlocked.setText(sb.toString());
         }
         
-        closeBtn.setOnClickListener(view -> dismiss());
+        closeBtn.setOnClickListener(view -> getDialog().dismiss());
     }
 
     @Override public void onResume() {

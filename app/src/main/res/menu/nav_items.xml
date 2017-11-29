@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/home"
         android:title="Home" />
-
-    <item
-        android:id="@+id/nav_profile"
-        android:icon="@drawable/avatar"
-        android:title="Profile" />
 
     <item
         android:id="@+id/nav_quests"
@@ -21,4 +14,9 @@
         android:id="@+id/nav_equip"
         android:icon="@drawable/shield"
         android:title="Equip" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/avatar"
+        android:title="Profile" />
 </menu>

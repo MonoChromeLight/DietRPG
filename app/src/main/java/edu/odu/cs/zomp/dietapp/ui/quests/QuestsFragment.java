@@ -18,11 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,8 +33,8 @@ import edu.odu.cs.zomp.dietapp.data.models.Quest;
 import edu.odu.cs.zomp.dietapp.data.models.QuestProgress;
 import edu.odu.cs.zomp.dietapp.data.models.QuestSummary;
 import edu.odu.cs.zomp.dietapp.ui.BaseFragment;
+import edu.odu.cs.zomp.dietapp.ui.archive.QuestArchiveActivity;
 import edu.odu.cs.zomp.dietapp.ui.battle.BattleActivity;
-import edu.odu.cs.zomp.dietapp.ui.history.QuestArchiveActivity;
 import edu.odu.cs.zomp.dietapp.ui.quests.adapters.ActiveQuestAdapter;
 import edu.odu.cs.zomp.dietapp.util.Constants;
 
@@ -108,27 +108,38 @@ public class QuestsFragment extends BaseFragment
     }
 
     private void loadPlayerData() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        FirebaseFirestore.getInstance()
-                .collection(Constants.DATABASE_PATH_CHARACTERS)
-                .document(uid)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    player = documentSnapshot.toObject(Character.class);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            Log.d(TAG, "Loading quests for user " + uid);
+            FirebaseFirestore.getInstance()
+                    .collection(Constants.DATABASE_PATH_CHARACTERS)
+                    .document(uid)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        player = documentSnapshot.toObject(Character.class);
+                        activeQuestAdapter.clear();
+                        for (QuestProgress questProgress : player.questJournal) {
+                            Log.d(TAG, "Quest: " + questProgress.questId);
+                            Log.d(TAG, "Quest: " + questProgress.questName);
+                            Log.d(TAG, "Quest: " + questProgress.questDescription);
 
-                    activeQuestAdapter.clear();
-                    List<QuestProgress> questJournal = player.questJournal;
-                    if (questJournal != null && questJournal.size() > 0) {
-                        for (QuestProgress questProgress : questJournal) {
-                            if (questProgress.currentSegment < questProgress.totalSegments)
+                            if (questProgress.currentSegment < questProgress.totalSegments) {
                                 activeQuestAdapter.add(questProgress);
+                                Log.d(TAG, "Added quest " + questProgress.questId);
+                            }
                         }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    questsRecycler.setVisibility(View.GONE);
-                    emptyQuestListText.setVisibility(View.VISIBLE);
-                });
+                    })
+                    .addOnFailureListener(e -> {
+                        questsRecycler.setVisibility(View.GONE);
+                        emptyQuestListText.setVisibility(View.VISIBLE);
+                    });
+        } else {
+            questsRecycler.setVisibility(View.GONE);
+            emptyQuestListText.setVisibility(View.VISIBLE);
+            emptyQuestListText.setText("Error loading quest details, try again later");
+        }
+
     }
 
     @Override public void questClicked(QuestProgress questProgressItem) {
