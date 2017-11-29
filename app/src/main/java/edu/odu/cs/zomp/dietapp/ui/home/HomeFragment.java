@@ -50,13 +50,15 @@ public class HomeFragment extends BaseFragment implements RecipeAdapter.IHomeAda
 
     private static final String TAG =  HomeFragment.class.getSimpleName();
 
-    @BindView(R.id.home_charImg) ImageView avatar;
+    @BindView(R.id.home_avatar) ImageView avatar;
     @BindView(R.id.home_name) TextView name;
     @BindView(R.id.home_questCompleteCount) TextView completedQuestCount;
+    @BindView(R.id.home_health_bar) ProgressBar healthBar;
+    @BindView(R.id.home_mana_bar) ProgressBar manaBar;
     @BindView(R.id.home_recycler_frame) LinearLayout recyclerFrame;
-    @BindView(R.id.home_empty_view) LinearLayout emptyViewFrame;
+    @BindView(R.id.home_empty_list_frame) LinearLayout emptyViewFrame;
     @BindView(R.id.home_empty_view_message) TextView emptyViewMessage;
-    @BindView(R.id.home_recipe_progressBar) ProgressBar recipeLoadingProgressBar;
+    @BindView(R.id.home_recipe_loadingIndicator) ProgressBar recipeLoadingProgressBar;
     @BindView(R.id.home_recycler) RecyclerView recycler;
 
     private RecipeAdapter adapter = null;
@@ -109,6 +111,11 @@ public class HomeFragment extends BaseFragment implements RecipeAdapter.IHomeAda
                     if (task.isSuccessful()) {
                         Character character = task.getResult().toObject(Character.class);
                         name.setText(character.name);
+
+                        healthBar.setMax(character.stats.get(Constants.STAT_MAX_HEALTH));
+                        healthBar.setProgress(character.stats.get(Constants.STAT_HEALTH));
+                        manaBar.setMax(character.stats.get(Constants.STAT_MAX_MANA));
+                        manaBar.setProgress(character.stats.get(Constants.STAT_MANA));
 
                         if (character.questJournal != null && character.questJournal.size() > 0) {
                             int questsCompleted = 0;

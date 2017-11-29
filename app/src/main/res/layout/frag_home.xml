@@ -31,7 +31,7 @@
                     android:textSize="20sp" />
 
                 <TextView
-                    android:id="@+id/view_home_progressFlv"
+                    android:id="@+id/home_progressFlv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/home_name"
@@ -46,12 +46,34 @@
                     android:layout_below="@+id/home_name"
                     android:layout_marginTop="8dp"
 
-                    android:layout_toEndOf="@+id/view_home_progressFlv"
+                    android:layout_toEndOf="@+id/home_progressFlv"
                     tools:text="5 / 10"
                     android:textSize="16sp" />
 
+                <ProgressBar
+                    android:id="@+id/home_health_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="15dp"
+                    android:layout_marginEnd="40dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/home_progressFlv"
+                    android:layout_toStartOf="@id/home_avatar"
+                    android:indeterminateOnly="false"
+                    android:progressDrawable="@drawable/health_progress_bar"/>
+
+                <ProgressBar
+                    android:id="@+id/home_mana_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="15dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="40dp"
+                    android:layout_toStartOf="@id/home_avatar"
+                    android:layout_below="@id/home_health_bar"
+                    android:indeterminateOnly="false"
+                    android:progressDrawable="@drawable/mana_progress_bar" />
+
                 <ImageView
-                    android:id="@+id/home_charImg"
+                    android:id="@+id/home_avatar"
                     android:layout_width="80dp"
                     android:layout_height="100dp"
                     android:layout_alignParentEnd="true" />
@@ -74,10 +96,11 @@
                 android:textColor="@color/colorPrimary"/>
 
             <ProgressBar
-                android:id="@+id/home_recipe_progressBar"
+                android:id="@+id/home_recipe_loadingIndicator"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
+                android:background="@drawable/mana_progress_bar"
                 android:visibility="gone"/>
 
             <android.support.v7.widget.RecyclerView
@@ -87,7 +110,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/home_empty_view"
+            android:id="@+id/home_empty_list_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"

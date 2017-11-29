@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/battle_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/black">
 
     <RelativeLayout
-        android:id="@+id/battle_frame"
+        android:id="@+id/battle_mainFrame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="60dp"
-        android:layout_alignParentTop="true">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <ImageView
             android:id="@+id/battle_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"/>
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/battle_playerSprite"
@@ -39,91 +41,117 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/battle_primaryActionFrame"
+        android:id="@+id/battle_statusFrame"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
+        android:layout_height="20dp"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/battle_action_attack"
+        <ProgressBar
+            android:id="@+id/battle_health_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="Attack"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:background="@drawable/bg_btn_primary"/>
+            android:layout_margin="4dp"
+            android:indeterminateOnly="false"
+            android:progressDrawable="@drawable/health_progress_bar"/>
 
-        <TextView
-            android:id="@+id/battle_action_magic"
+        <ProgressBar
+            android:id="@+id/battle_mana_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="Magic"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:background="@drawable/bg_btn_primary"/>
-
-        <TextView
-            android:id="@+id/battle_action_items"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Items"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:background="@drawable/bg_btn_primary"/>
-
-        <TextView
-            android:id="@+id/battle_action_flee"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Flee"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:background="@drawable/bg_btn_primary"/>
+            android:layout_margin="4dp"
+            android:indeterminateOnly="false"
+            android:progressDrawable="@drawable/mana_progress_bar" />
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/battle_progressBar"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="8dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/battle_message"
+    <FrameLayout
+        android:id="@+id/battle_actionFrame"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="center"
-        android:layout_alignParentBottom="true"
-        android:maxLines="2"
-        android:textSize="20sp"
-        android:textColor="@color/white"
-        tools:text="Enemy Killed!"
-        android:visibility="gone"/>
+        android:layout_height="wrap_content">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/battle_action_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:visibility="gone"/>
-</RelativeLayout>
+        <LinearLayout
+            android:id="@+id/battle_primaryActionFrame"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/battle_action_attack"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Attack"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_primary"/>
+
+            <TextView
+                android:id="@+id/battle_action_magic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Magic"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_primary"/>
+
+            <TextView
+                android:id="@+id/battle_action_items"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Items"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_primary"/>
+
+            <TextView
+                android:id="@+id/battle_action_flee"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Flee"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_primary"/>
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/battle_loadingIndicatgor"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/battle_message"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:maxLines="2"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            tools:text="Enemy Killed!"
+            android:visibility="gone"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/battle_action_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:visibility="gone"/>
+    </FrameLayout>
+</LinearLayout>

@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +60,7 @@ public class BattleActivity extends AppCompatActivity
     private static final String ARG_PROGRESS = "progress";
     private static final String ARG_QUEST_SUMMARY = "questSummary";
 
-    @BindView(R.id.battle_root) RelativeLayout viewRoot;
+    @BindView(R.id.battle_root) LinearLayout viewRoot;
     @BindView(R.id.battle_bg) ImageView background;
     @BindView(R.id.battle_playerSprite) ImageView playerSprite;
     @BindView(R.id.battle_enemySprite) ImageView enemySprite;
@@ -70,9 +69,11 @@ public class BattleActivity extends AppCompatActivity
     @BindView(R.id.battle_action_magic) TextView actionMagic;
     @BindView(R.id.battle_action_items) TextView attackItems;
     @BindView(R.id.battle_action_flee) TextView attackFlee;
-    @BindView(R.id.battle_progressBar) ProgressBar progressBar;
+    @BindView(R.id.battle_loadingIndicatgor) ProgressBar progressBar;
     @BindView(R.id.battle_message) TextView message;
     @BindView(R.id.battle_action_recycler) RecyclerView actionRecycler;
+    @BindView(R.id.battle_health_bar) ProgressBar healthBar;
+    @BindView(R.id.battle_mana_bar) ProgressBar manaBar;
 
     private Character player;
     private Quest quest;
@@ -169,6 +170,11 @@ public class BattleActivity extends AppCompatActivity
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e.fillInStackTrace());
         }
+
+        healthBar.setMax(player.stats.get(Constants.STAT_MAX_HEALTH));
+        healthBar.setProgress(player.stats.get(Constants.STAT_HEALTH));
+        manaBar.setMax(player.stats.get(Constants.STAT_MAX_MANA));
+        manaBar.setProgress(player.stats.get(Constants.STAT_MANA));
     }
 
     private void loadEnemies() {
