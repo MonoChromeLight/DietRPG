@@ -1,4 +1,14 @@
 # DietRPG
 Senior capstone group project
 
-![login](screenshots/Login.png){:height="25%" width="25%"} ![character creation](screenshots/Character Creation.png "Character Creation Summary"){:height="25%" width="25%"} ![home](screenshots/Home.png "Home"){:height="25%" width="25%"} ![recipe](screenshots/Recipe.png "Recipe Details"){:height="25%" width="25%"} ![diet picker](screenshots/Diet Picker.png){:height="25%" width="25%"} ![quests](screenshots/Quests.png){:height="25%" width="25%"} ![quest info](screenshots/Quest Info.png "Quest Info" ){:height="25%" width="25%"} ![battle](screenshots/Battle.png){:height="25%" width="25%"} ![battle info](screenshots/Battle Info.png){:height="25%" width="25%"} ![character](screenshots/Character 1.png){:height="25%" width="25%"} ![stats](screenshots/Character 2, Stats.png "Character Stats"){:height="25%" width="25%"}
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Login.png" width="270" height="480">
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Character%20Creation.png" width="270" height="480">
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Home.png" width="270" height="480">
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Recipe.png" width="270" height="480">
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Diet%20Picker.png" width="270" height="480">
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Quests.png" width="270" height="480">
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Quest%20Info.png" width="270" height="480">
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Battle.png" width="270" height="480">
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Battle%20Message.png" width="270" height="480">
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Character%201.png" width="270" height="480">
+<img src="https://github.com/dcalano/DietRPG/blob/master/screenshots/Character%202%2C%20Stats.png" width="270" height="480">
