@@ -17,7 +17,7 @@ repositories {
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.1"
+    buildToolsVersion "27.0.2"
     defaultConfig {
         applicationId "edu.odu.cs.zomp.dietapp"
         minSdkVersion 19
@@ -53,7 +53,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '27.0.1'
+    supportLibVersion = '27.0.2'
     butterknifeVersion = '8.8.1'
     retrofit2Version = '2.3.0'
     okHttpVersion = '3.8.0'
